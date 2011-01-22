@@ -1,0 +1,38 @@
+body {
+  position: relative;
+}
+
+#canvas {
+  border: 1px solid #000;
+  position: absolute;
+  width: 300px;
+  height: 300px;
+}
+
+.player {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 99;
+  width: 20px;
+  height: 20px;
+  background: red;
+  border-radius: 11px;
+  border: 1px solid #F88;
+}
+
+#clear {
+  position: absolute;
+  top: 450px
+}
+
+#log {
+  position: absolute;
+  height: 100px;
+  width: 300px;
+  top: 300px;
+  left: 0;
+  border: 1px solid gray;
+  overflow: auto
+
+}
