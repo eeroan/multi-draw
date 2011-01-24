@@ -1,9 +1,12 @@
 var canvas = $('#canvas')
-var ctx = canvas.get(0).getContext("2d");
-ctx.strokeStyle = "rgba(0, 0, 200, 0.5)";
-ctx.lineWidth = 3
+var players = $('.player')
+var canvasDom = canvas.get(0);
+var ctx = canvasDom.getContext("2d");
+
+ctx.strokeStyle = "rgba(0, 0, 200, 0.2)";
+ctx.lineWidth = 5
 var player
-var down = false
+var penDown = false
 var playerDown = false
 var oldMouse = []
 
@@ -14,7 +17,7 @@ $('#canvas').bind('mousedown touchstart', function(evt) {
   if (isPinch(evt))
     return true
   var e = getEvent(evt)
-  down = true
+  penDown = true
   ctx.moveTo(e.clientX, e.clientY)
   preventDefault(evt)
   return false
@@ -40,10 +43,9 @@ $('#canvas, .player').bind('mousemove touchmove', function(evt) {
     var newMouse = point(e)
     var deltaX = newMouse[0] - oldMouse[0]
     var deltaY = newMouse[1] - oldMouse[1]
-    //log('player move'+deltaX+','+deltaY)
     oldMouse = newMouse
     player.moveRelatively([deltaX,deltaY])
-  } else if (down) {
+  } else if (penDown) {
     ctx.lineTo(e.clientX, e.clientY)
     ctx.stroke()
   }
@@ -53,11 +55,11 @@ $('#canvas, .player').bind('mousemove touchmove', function(evt) {
 $('#canvas').bind('mouseup touchend', function(evt) {
   var e = getEvent(evt)
   ctx.stroke()
-  down = false
+  penDown = false
   playerDown = false
 })
 
-$('.player').bind('mousedown touchstart', function(evt) {
+players.bind('mousedown touchstart', function(evt) {
   var e = getEvent(evt)
   playerDown = true
   oldMouse = point(e)
@@ -78,7 +80,7 @@ $.fn.moveRelatively = function(pos) {
   this.css(css)
   return this
 }
-$('.player').bind('mouseup touchend', function(evt) {
+players.bind('mouseup touchend', function(evt) {
   var e = getEvent(evt)
   playerDown = false
 })
@@ -88,11 +90,11 @@ function preventDefault(evt) {
   else evt.preventDefault()
 }
 $('#clear').click(function() {
-  canvas.get(0).width=canvas.get(0).width+(flip*=-1)
+  canvasDom.width = canvasDom.width + (flip *= -1)
   ctx = canvas.get(0).getContext("2d");
   ctx.strokeStyle = "rgba(0, 0, 200, 0.5)";
   ctx.lineWidth = 3
 
 })
-$('.player').moveRelatively([100,100])
+players.moveRelatively([100,100])
 var flip = 1
