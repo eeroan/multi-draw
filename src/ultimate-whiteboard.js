@@ -46,7 +46,8 @@ function onDrawStart(evt) {
     return true
   var e = getEvent(evt)
   penDown = true
-  ctx.moveTo(e.clientX, e.clientY)
+  oldMouse = point(e)
+  ctx.moveTo.apply(ctx,oldMouse)
   preventDefault(evt)
   return false
 }
