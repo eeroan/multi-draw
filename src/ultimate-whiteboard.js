@@ -32,12 +32,6 @@ $('#clear').click(function() {
   ctx.beginPath();
   ctx.clearRect(0, 0, 300, 300);
   ctx.closePath();
-
-  /*canvasDom.width = canvasDom.width + (flip *= -1)
-   ctx = canvas.get(0).getContext("2d");
-   ctx.strokeStyle = "rgba(0, 0, 200, 0.5)";
-   ctx.lineWidth = 3
-   */
 })
 var flip = 1
 
