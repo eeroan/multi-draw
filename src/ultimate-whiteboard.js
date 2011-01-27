@@ -10,11 +10,13 @@ var penDown = false
 var playerDown = false
 var oldMouse = []
 
-var mouseDown = canvas.toObservable('mousedown touchstart')
-mouseDown.Subscribe(onDrawStart)
+var mouseDown = canvas.toObservable('mousedown')
+var touchStart = canvas.toObservable('touchstart').Where(notPinch)
+mouseDown.Merge(touchStart).Subscribe(onDrawStart)
 
-var mouseMove = $('#canvas, .player').toObservable('mousemove touchmove')
-mouseMove.Subscribe(onMouseMove)
+var mouseMove = $('#canvas, .player').toObservable('mousemove')
+var touchMove = $('#canvas, .player').toObservable('touchmove').Where(notPinch)
+mouseMove.Merge(touchMove).Subscribe(onMouseMove)
 var mouseUp = $('#canvas, .player').toObservable('mouseup touchend')
 mouseUp.Subscribe(function() {
   penDown = false
@@ -32,17 +34,13 @@ playerMoveStart.Subscribe(function(evt) {
 })
 
 var clear = $('#clear').toObservable('click')
-
 clear.Subscribe(function() {
   ctx.beginPath()
   ctx.clearRect(0, 0, 400, 500)
   ctx.closePath()
 })
-var flip = 1
 
 function onDrawStart(evt) {
-  if (isPinch(evt))
-    return true
   var e = getEvent(evt)
   penDown = true
   oldMouse = point(e)
@@ -51,8 +49,6 @@ function onDrawStart(evt) {
   return false
 }
 function onMouseMove(evt) {
-  if (isPinch(evt))
-    return true
   var e = getEvent(evt)
   var newMouse = point(e)
 
@@ -82,8 +78,8 @@ function point(e) {
    */
 }
 
-function isPinch(evt) {
-  return ipadEvent(evt) && evt.originalEvent.touches.length > 1
+function notPinch(evt) {
+  return evt.originalEvent.touches.length == 1
 }
 function ipadEvent(evt) {
   return evt && evt.originalEvent && evt.originalEvent.touches && evt.originalEvent.touches[0];
