@@ -28,7 +28,9 @@ players.bind('mousedown touchstart', function(evt) {
   return false
 })
 
-$('#clear').click(function() {
+var clear = $('#clear').toObservable('click');
+
+clear.Subscribe(function() {
   ctx.beginPath();
   ctx.clearRect(0, 0, 300, 300);
   ctx.closePath();
