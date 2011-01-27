@@ -11,7 +11,7 @@ var playerDown = false
 var oldMouse = []
 var counter = 3
 
-$('#canvas').bind('mousedown touchstart', onDrawStart)
+canvas.bind('mousedown touchstart', onDrawStart)
 $('#canvas, .player')
   .bind('mousemove touchmove', onMouseMove)
   .bind('mouseup touchend', function() {
@@ -43,7 +43,7 @@ function onDrawStart(evt) {
   var e = getEvent(evt)
   penDown = true
   oldMouse = point(e)
-  ctx.moveTo.apply(ctx,oldMouse)
+  ctx.moveTo.apply(ctx, oldMouse)
   preventDefault(evt)
   return false
 }
@@ -76,8 +76,11 @@ function onMouseMove(evt) {
 }
 
 function point(e) {
-  return [e.clientX,e.clientY]
+  if (e.offsetX) return [e.offsetX, e.offsetY]
+  if (e.layerX) return [e.layerX, e.layerY]
+  return [e.pageX - canvasDom.offsetLeft, e.pageY - canvasDom.offsetTop]
 }
+
 function isPinch(evt) {
   return ipadEvent(evt) && evt.originalEvent.touches.length > 1
 }
