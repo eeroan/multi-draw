@@ -21,11 +21,12 @@ mouseUp.Subscribe(function() {
   playerDown = false
 })
 
-players.bind('mousedown touchstart', function(evt) {
+var playerMoveStart = $('.player').toObservable('mousedown touchstart')
+playerMoveStart.Subscribe(function(evt) {
   var e = getEvent(evt)
   playerDown = true
   oldMouse = point(e)
-  player = $(this)
+  player = $(e.target)
   evt.preventDefault()
   return false
 })
