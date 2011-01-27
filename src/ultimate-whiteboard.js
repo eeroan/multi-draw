@@ -10,11 +10,12 @@ var penDown = false
 var playerDown = false
 var oldMouse = []
 
-canvas.bind('mousedown touchstart', onDrawStart)
+var mouseDown = canvas.toObservable('mousedown touchstart')
+mouseDown.Subscribe(onDrawStart)
 
-$('#canvas, .player')
-  .bind('mousemove touchmove', onMouseMove)
-  .bind('mouseup touchend', function() {
+$('#canvas, .player').bind('mousemove touchmove', onMouseMove)
+var mouseUp = $('#canvas, .player').toObservable('mouseup touchend')
+mouseUp.Subscribe(function() {
   penDown = false
   playerDown = false
 })
