@@ -94,9 +94,6 @@ function getEvent(evt) {
     return evt
   }
 }
-function log(msg) {
-  $('#log').prepend(msg + '\n')
-}
 
 $.fn.moveRelatively = function(pos) {
   var deltaX = pos[0]
