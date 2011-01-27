@@ -9,9 +9,9 @@ var player
 var penDown = false
 var playerDown = false
 var oldMouse = []
-var counter = 3
 
 canvas.bind('mousedown touchstart', onDrawStart)
+
 $('#canvas, .player')
   .bind('mousemove touchmove', onMouseMove)
   .bind('mouseup touchend', function() {
@@ -50,17 +50,12 @@ function onDrawStart(evt) {
 function onMouseMove(evt) {
   if (isPinch(evt))
     return true
-  counter--
-  if (counter > 0) {
-    return false
-  }
-  counter = 3
   var e = getEvent(evt)
   var newMouse = point(e)
 
-  var deltaX = newMouse[0] - oldMouse[0]
-  var deltaY = newMouse[1] - oldMouse[1]
   if (playerDown) {
+    var deltaX = newMouse[0] - oldMouse[0]
+    var deltaY = newMouse[1] - oldMouse[1]
     player.moveRelatively([deltaX,deltaY])
   } else if (penDown) {
     ctx.beginPath()
@@ -76,9 +71,12 @@ function onMouseMove(evt) {
 }
 
 function point(e) {
-  if (e.offsetX) return [e.offsetX, e.offsetY]
-  if (e.layerX) return [e.layerX, e.layerY]
-  return [e.pageX - canvasDom.offsetLeft, e.pageY - canvasDom.offsetTop]
+  return [e.clientX,e.clientY]
+  /*
+   if (e.layerX) return [e.layerX, e.layerY]
+   if (e.offsetX) return [e.offsetX, e.offsetY]
+   return [e.pageX - canvasDom.offsetLeft, e.pageY - canvasDom.offsetTop]
+   */
 }
 
 function isPinch(evt) {
