@@ -13,7 +13,8 @@ var oldMouse = []
 var mouseDown = canvas.toObservable('mousedown touchstart')
 mouseDown.Subscribe(onDrawStart)
 
-$('#canvas, .player').bind('mousemove touchmove', onMouseMove)
+var mouseMove = $('#canvas, .player').toObservable('mousemove touchmove')
+mouseMove.Subscribe(onMouseMove)
 var mouseUp = $('#canvas, .player').toObservable('mouseup touchend')
 mouseUp.Subscribe(function() {
   penDown = false
@@ -25,7 +26,7 @@ players.bind('mousedown touchstart', function(evt) {
   playerDown = true
   oldMouse = point(e)
   player = $(this)
-  preventDefault(evt)
+  evt.preventDefault()
   return false
 })
 
@@ -33,7 +34,7 @@ var clear = $('#clear').toObservable('click')
 
 clear.Subscribe(function() {
   ctx.beginPath()
-  ctx.clearRect(0, 0, 300, 300)
+  ctx.clearRect(0, 0, 400, 500)
   ctx.closePath()
 })
 var flip = 1
@@ -45,7 +46,7 @@ function onDrawStart(evt) {
   penDown = true
   oldMouse = point(e)
   ctx.moveTo.apply(ctx, oldMouse)
-  preventDefault(evt)
+  evt.preventDefault()
   return false
 }
 function onMouseMove(evt) {
@@ -67,7 +68,7 @@ function onMouseMove(evt) {
     ctx.closePath()
   }
   oldMouse = newMouse
-  preventDefault(evt)
+  evt.preventDefault()
   return false
 }
 
@@ -93,11 +94,6 @@ function getEvent(evt) {
     return evt
   }
 }
-function preventDefault(evt) {
-  if (evt.stopPropagation) evt.stopPropagation()
-  else evt.preventDefault()
-}
-
 function log(msg) {
   $('#log').prepend(msg + '\n')
 }
