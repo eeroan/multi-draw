@@ -1,9 +1,9 @@
 var canvas = $('#canvas')
 var players = $('.player')
-var canvasDom = canvas.get(0);
-var ctx = canvasDom.getContext("2d");
+var canvasDom = canvas.get(0)
+var ctx = canvasDom.getContext("2d")
 
-ctx.strokeStyle = "rgba(0, 0, 200, 1.0)";
+ctx.strokeStyle = "rgba(0, 0, 200, 1.0)"
 ctx.lineWidth = 5
 var player
 var penDown = false
@@ -28,12 +28,12 @@ players.bind('mousedown touchstart', function(evt) {
   return false
 })
 
-var clear = $('#clear').toObservable('click');
+var clear = $('#clear').toObservable('click')
 
 clear.Subscribe(function() {
-  ctx.beginPath();
-  ctx.clearRect(0, 0, 300, 300);
-  ctx.closePath();
+  ctx.beginPath()
+  ctx.clearRect(0, 0, 300, 300)
+  ctx.closePath()
 })
 var flip = 1
 
@@ -63,12 +63,12 @@ function onMouseMove(evt) {
   if (playerDown) {
     player.moveRelatively([deltaX,deltaY])
   } else if (penDown) {
-    ctx.beginPath();
+    ctx.beginPath()
     ctx.lineCap = "round";
     ctx.moveTo.apply(ctx, oldMouse)
     ctx.lineTo.apply(ctx, newMouse)
-    ctx.stroke();
-    ctx.closePath();
+    ctx.stroke()
+    ctx.closePath()
   }
   oldMouse = newMouse
   preventDefault(evt)
@@ -108,7 +108,7 @@ $.fn.moveRelatively = function(pos) {
   var deltaY = pos[1]
   var oldX = parseInt(this.css('left'), 10)
   var oldY = parseInt(this.css('top'), 10)
-  var css = {left:(oldX + deltaX) + 'px',top:(oldY + deltaY) + 'px'};
+  var css = {left:(oldX + deltaX) + 'px',top:(oldY + deltaY) + 'px'}
   this.css(css)
   return this
 }
