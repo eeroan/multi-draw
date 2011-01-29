@@ -66,7 +66,7 @@ function notPinch(evt) {
   return evt.originalEvent.touches.length == 1
 }
 function ipadEvent(evt) {
-  return evt && evt.originalEvent && evt.originalEvent.touches && evt.originalEvent.touches[0];
+  return evt.originalEvent.touches
 }
 function getEvent(evt) {
   if (ipadEvent(evt)) {
