@@ -1,10 +1,8 @@
 var canvas = $('#canvas')
 var players = $('.player')
 var canvasDom = canvas.get(0)
-var ctx = canvasDom.getContext("2d")
+var ctx = $.extend(canvasDom.getContext("2d"), {strokeStyle: "rgba(0, 0, 200, 1.0)", lineWidth: 5})
 
-ctx.strokeStyle = "rgba(0, 0, 200, 1.0)"
-ctx.lineWidth = 5
 var player
 var penDown = false
 var playerDown = false
