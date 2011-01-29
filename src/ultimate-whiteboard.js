@@ -3,30 +3,33 @@ var players = $('.player')
 var canvasDom = canvas.get(0)
 var ctx = $.extend(canvasDom.getContext("2d"), {strokeStyle: "rgba(0, 0, 200, 1.0)", lineWidth: 5,lineCap: "round"})
 
-var player
-var penDown = false
-var playerDown = false
-var oldMouse = []
-
 var mouseDown = canvas.toObservable('mousedown')
 var touchStart = canvas.toObservable('touchstart').Where(notPinch)
-mouseDown.Merge(touchStart).Subscribe(onDrawStart)
 
+var down = mouseDown.Merge(touchStart)
 var mouseMove = $('#canvas, .player').toObservable('mousemove')
 var touchMove = $('#canvas, .player').toObservable('touchmove').Where(notPinch)
+
 var move = mouseMove.Merge(touchMove)
-move.Select(getEvent).Subscribe(onMouseMove)
 move.Subscribe(preventDefault)
 var mouseUp = $('#canvas, .player').toObservable('mouseup touchend')
-mouseUp.Subscribe(function() {
-  penDown = false
-  playerDown = false
-})
 var playerMoveStart = $('.player').toObservable('mousedown touchstart')
-playerMoveStart.Subscribe(function(e) {
-  playerDown = true
-  oldMouse = point(e)
-  player = $(e.target)
+var pencilMoves = move.Select(getEvent).Select(point).SkipUntil(down).TakeUntil(mouseUp)
+var curve = pencilMoves.Zip(pencilMoves.Skip(1), function(prev, cur) {
+  return [prev, cur, ctx]
+})
+
+curve.Repeat().Subscribe(function(line) {
+  drawLine.apply(null, line)
+})
+
+var playerMoves = move.Select(getEvent).SkipUntil(playerMoveStart).TakeUntil(mouseUp)
+var playerPos = playerMoves.Zip(playerMoves.Skip(1), function(prev, cur) {
+  //TODO cur.target voi osua divin ulkopuolelle. pitää olla combine latest tai vastaava
+  return [point(prev), point(cur), $(cur.target)]
+})
+playerPos.Repeat().Subscribe(function(pos) {
+  movePlayer.apply(null, pos)
 })
 
 var clear = $('#clear').toObservable('click')
@@ -36,21 +39,10 @@ clear.Subscribe(function() {
   ctx.closePath()
 })
 
-function onDrawStart(e) {
-  penDown = true
-  oldMouse = point(e)
-}
-function onMouseMove(e) {
-  var newMouse = point(e)
-
-  if (playerDown) {
-    var deltaX = newMouse[0] - oldMouse[0]
-    var deltaY = newMouse[1] - oldMouse[1]
-    player.moveRelatively([deltaX,deltaY])
-  } else if (penDown) {
-    drawLine(oldMouse, newMouse, ctx)
-  }
-  oldMouse = newMouse
+function movePlayer(oldMouse, newMouse, player) {
+  var deltaX = newMouse[0] - oldMouse[0]
+  var deltaY = newMouse[1] - oldMouse[1]
+  player.moveRelatively([deltaX,deltaY])
 }
 
 function point(e) {
