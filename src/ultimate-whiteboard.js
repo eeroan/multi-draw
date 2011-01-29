@@ -43,7 +43,6 @@ function onDrawStart(evt) {
   var e = getEvent(evt)
   penDown = true
   oldMouse = point(e)
-  ctx.moveTo.apply(ctx, oldMouse)
 }
 function onMouseMove(evt) {
   var e = getEvent(evt)
@@ -54,12 +53,7 @@ function onMouseMove(evt) {
     var deltaY = newMouse[1] - oldMouse[1]
     player.moveRelatively([deltaX,deltaY])
   } else if (penDown) {
-    ctx.beginPath()
-    ctx.lineCap = "round";
-    ctx.moveTo.apply(ctx, oldMouse)
-    ctx.lineTo.apply(ctx, newMouse)
-    ctx.stroke()
-    ctx.closePath()
+    drawLine(oldMouse, newMouse, ctx)
   }
   oldMouse = newMouse
 }
@@ -89,7 +83,14 @@ function getEvent(evt) {
 function preventDefault(e) {
   e.preventDefault()
 }
-
+function drawLine(start, end, ctx) {
+  ctx.beginPath()
+  ctx.lineCap = "round";
+  ctx.moveTo.apply(ctx, start)
+  ctx.lineTo.apply(ctx, end)
+  ctx.stroke()
+  ctx.closePath()
+}
 $.fn.moveRelatively = function(pos) {
   var deltaX = pos[0]
   var deltaY = pos[1]
