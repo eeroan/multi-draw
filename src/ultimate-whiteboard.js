@@ -16,21 +16,20 @@ mouseDown.Merge(touchStart).Subscribe(onDrawStart)
 
 var mouseMove = $('#canvas, .player').toObservable('mousemove')
 var touchMove = $('#canvas, .player').toObservable('touchmove').Where(notPinch)
-mouseMove.Merge(touchMove).Subscribe(onMouseMove)
+var move = mouseMove.Merge(touchMove)
+move.Subscribe(onMouseMove)
+move.Subscribe(preventDefault)
 var mouseUp = $('#canvas, .player').toObservable('mouseup touchend')
 mouseUp.Subscribe(function() {
   penDown = false
   playerDown = false
 })
-
 var playerMoveStart = $('.player').toObservable('mousedown touchstart')
 playerMoveStart.Subscribe(function(evt) {
   var e = getEvent(evt)
   playerDown = true
   oldMouse = point(e)
   player = $(e.target)
-  evt.preventDefault()
-  return false
 })
 
 var clear = $('#clear').toObservable('click')
@@ -45,8 +44,6 @@ function onDrawStart(evt) {
   penDown = true
   oldMouse = point(e)
   ctx.moveTo.apply(ctx, oldMouse)
-  evt.preventDefault()
-  return false
 }
 function onMouseMove(evt) {
   var e = getEvent(evt)
@@ -65,8 +62,6 @@ function onMouseMove(evt) {
     ctx.closePath()
   }
   oldMouse = newMouse
-  evt.preventDefault()
-  return false
 }
 
 function point(e) {
@@ -90,6 +85,9 @@ function getEvent(evt) {
   } else {
     return evt
   }
+}
+function preventDefault(e) {
+  e.preventDefault()
 }
 
 $.fn.moveRelatively = function(pos) {
