@@ -1,7 +1,7 @@
 var canvas = $('#canvas')
 var players = $('.player')
 var canvasDom = canvas.get(0)
-var ctx = $.extend(canvasDom.getContext("2d"), {strokeStyle: "rgba(0, 0, 200, 1.0)", lineWidth: 5})
+var ctx = $.extend(canvasDom.getContext("2d"), {strokeStyle: "rgba(0, 0, 200, 1.0)", lineWidth: 5,lineCap: "round"})
 
 var player
 var penDown = false
@@ -80,7 +80,6 @@ function preventDefault(e) {
 }
 function drawLine(start, end, ctx) {
   ctx.beginPath()
-  ctx.lineCap = "round";
   ctx.moveTo.apply(ctx, start)
   ctx.lineTo.apply(ctx, end)
   ctx.stroke()
