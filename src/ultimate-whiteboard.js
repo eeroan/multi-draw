@@ -6,15 +6,15 @@ var ctx = $.extend(canvasDom.getContext("2d"), {strokeStyle: "rgba(0, 0, 200, 1.
 var mouseDown = canvas.toObservable('mousedown')
 var touchStart = canvas.toObservable('touchstart').Where(notPinch)
 
-var down = mouseDown.Merge(touchStart)
-var mouseMove = $('#canvas, .player').toObservable('mousemove')
-var touchMove = $('#canvas, .player').toObservable('touchmove').Where(notPinch)
+var pencilDown = mouseDown.Merge(touchStart)
+var mouseMove = $(document).toObservable('mousemove')
+var touchMove = $(document).toObservable('touchmove').Where(notPinch)
 
 var move = mouseMove.Merge(touchMove)
 move.Subscribe(preventDefault)
-var mouseUp = $('#canvas, .player').toObservable('mouseup touchend')
+var mouseUp = $(document).toObservable('mouseup touchend')
 var playerMoveStart = $('.player').toObservable('mousedown touchstart')
-var pencilMoves = move.Select(getEvent).Select(point).SkipUntil(down).TakeUntil(mouseUp)
+var pencilMoves = move.Select(getEvent).Select(point).SkipUntil(pencilDown).TakeUntil(mouseUp)
 var curve = pencilMoves.Zip(pencilMoves.Skip(1), function(prev, cur) {
   return [prev, cur, ctx]
 })
@@ -23,13 +23,19 @@ curve.Repeat().Subscribe(function(line) {
   drawLine.apply(null, line)
 })
 
-var playerMoves = move.Select(getEvent).SkipUntil(playerMoveStart).TakeUntil(mouseUp)
+
+var playerMoves = move.Select(getEvent).Select(point).SkipUntil(playerMoveStart).TakeUntil(mouseUp)
 var playerPos = playerMoves.Zip(playerMoves.Skip(1), function(prev, cur) {
   //TODO cur.target voi osua divin ulkopuolelle. pitää olla combine latest tai vastaava
-  return [point(prev), point(cur), $(cur.target)]
+  //TODO pelaajan siirto ei toimi ipadilla
+  return [prev,cur]
 })
-playerPos.Repeat().Subscribe(function(pos) {
-  movePlayer.apply(null, pos)
+
+var combined = playerMoveStart.CombineLatest(playerPos.Repeat(), function(start,pos) {
+  return [start.target, pos]
+})
+combined.Subscribe(function(pos) {
+  movePlayer($(pos[0]),pos[1][0],pos[1][1])
 })
 
 var clear = $('#clear').toObservable('click')
@@ -39,7 +45,7 @@ clear.Subscribe(function() {
   ctx.closePath()
 })
 
-function movePlayer(oldMouse, newMouse, player) {
+function movePlayer(player,oldMouse, newMouse) {
   var deltaX = newMouse[0] - oldMouse[0]
   var deltaY = newMouse[1] - oldMouse[1]
   player.moveRelatively([deltaX,deltaY])
@@ -86,5 +92,5 @@ $.fn.moveRelatively = function(pos) {
   this.css(css)
   return this
 }
-players.moveRelatively([100,100])
+players.each(function(i) {$(this).moveRelatively([50*i,100])})
 
