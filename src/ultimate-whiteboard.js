@@ -6,7 +6,6 @@ mouseMove.Merge(touchMove).Subscribe(preventDefault)
 var startMovingPlayer = startOn($('.player')).Select(eventTarget)
 movesAfter(pencilDown).Repeat().Subscribe(drawPath)
 startMovingPlayer.CombineLatest(movesAfter(startMovingPlayer).Repeat(), argumentsAsList).Subscribe(movePlayer)
-
 var clear = $('#clear').toObservable('click')
 clear.Subscribe(clearGameField)
 
@@ -21,22 +20,27 @@ function movesAfter(startEvent) {
   var move = mouseMove.Merge(touchMove.Select(touchEvent)).Select(point)
   return delta(move.SkipUntil(startEvent).TakeUntil(end))
 }
+
 function delta(moves) {
   return moves.Zip(moves.Skip(1), argumentsAsList)
 
 }
+
 function startOn(container) {
   var mouseDown = container.toObservable('mousedown')
   var touchStart = container.toObservable('touchstart').Where(notPinch)
   return mouseDown.Merge(touchStart)
 
 }
+
 function notPinch(evt) {
   return evt.originalEvent.touches.length == 1
 }
+
 function touchEvent(evt) {
   return evt.originalEvent.touches[0]
 }
+
 function preventDefault(e) {
   e.preventDefault()
 }
@@ -75,6 +79,7 @@ function point(e) {
 function argumentsAsList() {
   return arguments
 }
+
 $.fn.moveRelatively = function(pos) {
   var deltaX = pos[0]
   var deltaY = pos[1]
@@ -84,6 +89,7 @@ $.fn.moveRelatively = function(pos) {
   this.css(css)
   return this
 }
+
 $('.player').each(function(i) {
   $(this).moveRelatively([50 * i,100])
 })
