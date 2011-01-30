@@ -1,31 +1,28 @@
-var canvas = $('#canvas')
-var players = $('.player')
-var canvasDom = canvas.get(0)
-var ctx = $.extend(canvasDom.getContext("2d"), {strokeStyle: "rgba(0, 0, 200, 1.0)", lineWidth: 5,lineCap: "round"})
-
-var pencilDown = startOn(canvas)
+var gameField = $.extend($('#canvas').get(0).getContext("2d"), {strokeStyle: "rgba(0, 0, 200, 1.0)", lineWidth: 5,lineCap: "round"})
+var pencilDown = startOn($('#canvas'))
 var mouseMove = $(document).toObservable('mousemove')
 var touchMove = $(document).toObservable('touchmove').Where(notPinch)
 mouseMove.Merge(touchMove).Subscribe(preventDefault)
-
-var playerMoveStart = startOn(players).Select(targetElement)
-movesAfter(pencilDown).Repeat().Subscribe(drawLine)
-playerMoveStart.CombineLatest(movesAfter(playerMoveStart).Repeat(), argumentList).Subscribe(movePlayer)
+var startMovingPlayer = startOn($('.player')).Select(eventTarget)
+movesAfter(pencilDown).Repeat().Subscribe(drawPath)
+startMovingPlayer.CombineLatest(movesAfter(startMovingPlayer).Repeat(), argumentsAsList).Subscribe(movePlayer)
 
 var clear = $('#clear').toObservable('click')
-clear.Subscribe(function() {
-  ctx.beginPath()
-  ctx.clearRect(0, 0, 400, 500)
-  ctx.closePath()
-})
+clear.Subscribe(clearGameField)
+
+function clearGameField() {
+  gameField.beginPath()
+  gameField.clearRect(0, 0, 400, 500)
+  gameField.closePath()
+}
 
 function movesAfter(startEvent) {
-  var mouseUp = $(document).toObservable('mouseup touchend')
+  var end = $(document).toObservable('mouseup touchend')
   var move = mouseMove.Merge(touchMove.Select(touchEvent)).Select(point)
-  return delta(move.SkipUntil(startEvent).TakeUntil(mouseUp))
+  return delta(move.SkipUntil(startEvent).TakeUntil(end))
 }
 function delta(moves) {
-  return moves.Zip(moves.Skip(1), argumentList)
+  return moves.Zip(moves.Skip(1), argumentsAsList)
 
 }
 function startOn(container) {
@@ -44,16 +41,16 @@ function preventDefault(e) {
   e.preventDefault()
 }
 
-function targetElement(e) {
+function eventTarget(e) {
   return $(e.target)
 }
 
-function drawLine(line) {
-  ctx.beginPath()
-  ctx.moveTo.apply(ctx, line[0])
-  ctx.lineTo.apply(ctx, line[1])
-  ctx.stroke()
-  ctx.closePath()
+function drawPath(line) {
+  gameField.beginPath()
+  gameField.moveTo.apply(gameField, line[0])
+  gameField.lineTo.apply(gameField, line[1])
+  gameField.stroke()
+  gameField.closePath()
 }
 
 function movePlayer(playerAndDelta) {
@@ -75,7 +72,7 @@ function point(e) {
    */
 }
 
-function argumentList() {
+function argumentsAsList() {
   return arguments
 }
 $.fn.moveRelatively = function(pos) {
@@ -87,6 +84,6 @@ $.fn.moveRelatively = function(pos) {
   this.css(css)
   return this
 }
-players.each(function(i) {
+$('.player').each(function(i) {
   $(this).moveRelatively([50 * i,100])
 })
