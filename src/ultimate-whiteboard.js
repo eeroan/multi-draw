@@ -1,20 +1,18 @@
-var field = {
-  width: 370,
-  height: 230 * 2 + 640
-}
+var width = 370
+var height = 230 * 2 + 640
+var endZone = 230
+var brick = 410
 var numberOfPlayers = 7
-var penStyle = {strokeStyle: "rgba(0, 0, 200, 1.0)", lineWidth: 5, lineCap: "round"}
+var penStyle = {strokeStyle: "rgba(100, 100, 200, 1.0)", lineWidth: 5, lineCap: "round"}
 $.fn.moveRelatively = function(pos) {
-  var deltaX = pos[0]
-  var deltaY = pos[1]
   var oldX = parseInt(this.css('left'), 10)
   var oldY = parseInt(this.css('top'), 10)
-  var css = {left:(oldX + deltaX) + 'px',top:(oldY + deltaY) + 'px'}
+  var css = {left:(oldX + pos[0]) + 'px',top:(oldY + pos[1]) + 'px'}
   this.css(css)
   return this
 }
 
-var gameField = $.extend($('#canvas').get(0).getContext("2d"), penStyle)
+var gameField = $('#canvas').get(0).getContext("2d")
 drawField()
 createPlayers()
 var pencilDown = startOn($('#canvas'))
@@ -29,20 +27,20 @@ clear.Subscribe(clearGameField)
 
 function clearGameField() {
   gameField.beginPath()
-  gameField.clearRect(0, 0, field.width, field.height)
+  gameField.clearRect(0, 0, width, height)
   gameField.closePath()
   drawField()
 }
 function drawField() {
   gameField = $.extend(gameField, {strokeStyle: "rgba(0, 0, 0, 1.0)", lineWidth: 1,lineCap: "round"})
-  drawPath([
-    [0,230],
-    [370,230]
-  ])
-  drawPath([
-    [0,1100 - 230],
-    [370,1100 - 230]
-  ])
+  var center = width/2
+  var x = 5
+  drawPath([ [0,endZone], [width,endZone] ])
+  drawPath([ [0,height - endZone], [width,height - endZone] ])
+  drawPath([[center-x,brick-x],[center+x,brick+x]])
+  drawPath([[center-x,brick+x],[center+x,brick-x]])
+  drawPath([[center-x,height-brick-x],[center+x,height-brick+x]])
+  drawPath([[center-x,height-brick+x],[center+x,height-brick-x]])
   gameField = $.extend(gameField, penStyle)
 }
 
@@ -54,14 +52,12 @@ function movesAfter(startEvent) {
 
 function delta(moves) {
   return moves.Zip(moves.Skip(1), argumentsAsList)
-
 }
 
 function startOn(container) {
   var mouseDown = container.toObservable('mousedown')
   var touchStart = container.toObservable('touchstart').Where(notPinch)
   return mouseDown.Merge(touchStart)
-
 }
 
 function notPinch(evt) {
@@ -119,8 +115,7 @@ function createPlayers() {
     if (i < 3) {
       $(this).moveRelatively([i * 100 + 80,250])
     } else {
-      $(this).moveRelatively([(field.width - 10) / 2, 40 * i + 300])
+      $(this).moveRelatively([(width - 10) / 2, 40 * i + 300])
     }
   })
-
 }
