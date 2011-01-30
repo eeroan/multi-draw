@@ -46,7 +46,7 @@ function drawField() {
 
 function movesAfter(startEvent) {
   var end = $(document).toObservable('mouseup touchend')
-  var move = mouseMove.Merge(touchMove.Select(touchEvent)).Select(point)
+  var move = mouseMove.Merge(touchMove.Select(touchEvent)).Select(mousePosition)
   return delta(move.SkipUntil(startEvent).TakeUntil(end))
 }
 
@@ -94,13 +94,14 @@ function movePlayer(playerAndDelta) {
   playerAndDelta[0].moveRelatively(playerAndDelta[1])
 }
 
-function point(e) {
-  return [e.clientX,e.clientY]
-  /*
-   if (e.layerX) return [e.layerX, e.layerY]
-   if (e.offsetX) return [e.offsetX, e.offsetY]
-   return [e.pageX - canvasDom.offsetLeft, e.pageY - canvasDom.offsetTop]
-   */
+function mousePosition(e) {
+  if ($(e.target).hasClass('player'))
+    return [e.clientX,e.clientY]
+  if (e.layerX) return [e.layerX, e.layerY]
+  if (e.offsetX) return [e.offsetX, e.offsetY]
+  var canvasDom = $('#canvas').get(0)
+  return [e.pageX - canvasDom.offsetLeft, e.pageY - canvasDom.offsetTop]
+
 }
 
 function argumentsAsList() {
