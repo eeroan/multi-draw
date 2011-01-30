@@ -13,7 +13,7 @@ $.fn.moveRelatively = function(pos) {
 }
 
 var gameField = $('#canvas').get(0).getContext("2d")
-drawField()
+drawGameField()
 createPlayers()
 var pencilDown = startOn($('#canvas'))
 var mouseMove = $(document).toObservable('mousemove')
@@ -29,9 +29,9 @@ function clearGameField() {
   gameField.beginPath()
   gameField.clearRect(0, 0, width, height)
   gameField.closePath()
-  drawField()
+  drawGameField()
 }
-function drawField() {
+function drawGameField() {
   gameField = $.extend(gameField, {strokeStyle: "rgba(0, 0, 0, 1.0)", lineWidth: 1,lineCap: "round"})
   var center = width/2
   var x = 5
@@ -46,6 +46,7 @@ function drawField() {
 
 function movesAfter(startEvent) {
   var end = $(document).toObservable('mouseup touchend')
+  //TODO needs BufferWithTime or something for making it behave faster
   var move = mouseMove.Merge(touchMove.Select(touchEvent)).Select(mousePosition)
   return delta(move.SkipUntil(startEvent).TakeUntil(end))
 }
@@ -101,7 +102,6 @@ function mousePosition(e) {
   if (e.offsetX) return [e.offsetX, e.offsetY]
   var canvasDom = $('#canvas').get(0)
   return [e.pageX - canvasDom.offsetLeft, e.pageY - canvasDom.offsetTop]
-
 }
 
 function argumentsAsList() {
