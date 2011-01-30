@@ -1,4 +1,22 @@
-var gameField = $.extend($('#canvas').get(0).getContext("2d"), {strokeStyle: "rgba(0, 0, 200, 1.0)", lineWidth: 5,lineCap: "round"})
+var field = {
+  width: 370,
+  height: 230 * 2 + 640
+}
+var numberOfPlayers = 7
+var penStyle = {strokeStyle: "rgba(0, 0, 200, 1.0)", lineWidth: 5, lineCap: "round"}
+$.fn.moveRelatively = function(pos) {
+  var deltaX = pos[0]
+  var deltaY = pos[1]
+  var oldX = parseInt(this.css('left'), 10)
+  var oldY = parseInt(this.css('top'), 10)
+  var css = {left:(oldX + deltaX) + 'px',top:(oldY + deltaY) + 'px'}
+  this.css(css)
+  return this
+}
+
+var gameField = $.extend($('#canvas').get(0).getContext("2d"), penStyle)
+drawField()
+createPlayers()
 var pencilDown = startOn($('#canvas'))
 var mouseMove = $(document).toObservable('mousemove')
 var touchMove = $(document).toObservable('touchmove').Where(notPinch)
@@ -11,8 +29,21 @@ clear.Subscribe(clearGameField)
 
 function clearGameField() {
   gameField.beginPath()
-  gameField.clearRect(0, 0, 400, 500)
+  gameField.clearRect(0, 0, field.width, field.height)
   gameField.closePath()
+  drawField()
+}
+function drawField() {
+  gameField = $.extend(gameField, {strokeStyle: "rgba(0, 0, 0, 1.0)", lineWidth: 1,lineCap: "round"})
+  drawPath([
+    [0,230],
+    [370,230]
+  ])
+  drawPath([
+    [0,1100 - 230],
+    [370,1100 - 230]
+  ])
+  gameField = $.extend(gameField, penStyle)
 }
 
 function movesAfter(startEvent) {
@@ -80,16 +111,16 @@ function argumentsAsList() {
   return arguments
 }
 
-$.fn.moveRelatively = function(pos) {
-  var deltaX = pos[0]
-  var deltaY = pos[1]
-  var oldX = parseInt(this.css('left'), 10)
-  var oldY = parseInt(this.css('top'), 10)
-  var css = {left:(oldX + deltaX) + 'px',top:(oldY + deltaY) + 'px'}
-  this.css(css)
-  return this
-}
+function createPlayers() {
+  for (var i = 0; i < numberOfPlayers; i++) {
+    $('body').append($('<div class="player"></div>'))
+  }
+  $('.player').each(function(i) {
+    if (i < 3) {
+      $(this).moveRelatively([i * 100 + 80,250])
+    } else {
+      $(this).moveRelatively([(field.width - 10) / 2, 40 * i + 300])
+    }
+  })
 
-$('.player').each(function(i) {
-  $(this).moveRelatively([50 * i,100])
-})
+}

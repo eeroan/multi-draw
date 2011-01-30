@@ -25,14 +25,3 @@ body {
 #clear {
   display:block;
 }
-
-#log {
-  position: absolute;
-  height: 100px;
-  width: 300px;
-  top: 300px;
-  left: 0;
-  border: 1px solid gray;
-  overflow: auto
-
-}
