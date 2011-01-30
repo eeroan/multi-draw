@@ -5,7 +5,7 @@ var touchMove = $(document).toObservable('touchmove').Where(notPinch)
 mouseMove.Merge(touchMove).Subscribe(preventDefault)
 var startMovingPlayer = startOn($('.player')).Select(eventTarget)
 movesAfter(pencilDown).Repeat().Subscribe(drawPath)
-startMovingPlayer.CombineLatest(movesAfter(startMovingPlayer).Repeat(), argumentsAsList).Subscribe(movePlayer)
+startMovingPlayer.CombineLatest(movesAfter(startMovingPlayer).Select(asDelta).Repeat(), argumentsAsList).Subscribe(movePlayer)
 var clear = $('#clear').toObservable('click')
 clear.Subscribe(clearGameField)
 
@@ -57,14 +57,14 @@ function drawPath(line) {
   gameField.closePath()
 }
 
+function asDelta(oldAndNew) {
+  var oldPoint = oldAndNew[0]
+  var newPoint = oldAndNew[1]
+  return [(newPoint[0] - oldPoint[0]),(newPoint[1] - oldPoint[1])]
+}
+
 function movePlayer(playerAndDelta) {
-  var player = playerAndDelta[0]
-  var delta = playerAndDelta[1]
-  var oldMouse = delta[0]
-  var newMouse = delta[1]
-  var deltaX = newMouse[0] - oldMouse[0]
-  var deltaY = newMouse[1] - oldMouse[1]
-  player.moveRelatively([deltaX,deltaY])
+  playerAndDelta[0].moveRelatively(playerAndDelta[1])
 }
 
 function point(e) {
