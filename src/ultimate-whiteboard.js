@@ -20,10 +20,34 @@ var mouseMove = $(document).toObservable('mousemove')
 var touchMove = $(document).toObservable('touchmove').Where(notPinch)
 mouseMove.Merge(touchMove).Subscribe(preventDefault)
 var startMovingPlayer = startOn($('.player')).Select(eventTarget)
-movesAfter(pencilDown).Repeat().Subscribe(drawPath)
+var end = $(document).toObservable('mouseup touchend')
+var endStatus = end.Select(mousePosition)
+var repeatedMoves = movesAfter(pencilDown).Repeat()
+var movesWithMouseUp = repeatedMoves.Merge(endStatus)
+var lastVector = movesWithMouseUp.Zip(movesWithMouseUp.Skip(5), argumentsAsList).Where(function(evt) {return !isNaN(evt[1][0]) }).Select(function(evt){return [evt[0][0], evt[1]]}).Select(function(e) {
+  var v = { x1 : e[0][0], y1 : e[0][1], x2 : e[1][0], y2 : e[1][1] }
+  v._x = v.x2 - v.x1
+  v._y = v.y2 - v.y1
+  v.l = Math.sqrt(v._x * v._x + v._y * v._y) / 10
+  return v
+})
+var arrow = lastVector.Select(function(v) {
+  with (v) {
+    return [ [x2,y2], [x2 + (-_x + _y) / l | 0,y2 + (-_y - _x) / l | 0] ]
+  }
+})
+  .Merge(lastVector.Select(function(v) {
+  with (v) {
+    return [ [x2,y2], [x2 + (-_x - _y) / l | 0,y2 + (-_y + _x) / l | 0] ]
+  }
+}))
+repeatedMoves.Merge(arrow).Subscribe(drawPath)
+
 startMovingPlayer.CombineLatest(movesAfter(startMovingPlayer).Select(asDelta).Repeat(), argumentsAsList).Subscribe(movePlayer)
 var clear = $('#clear').toObservable('click')
 clear.Subscribe(clearGameField)
+
+
 
 function clearGameField() {
   gameField.beginPath()
@@ -45,7 +69,6 @@ function drawGameField() {
 }
 
 function movesAfter(startEvent) {
-  var end = $(document).toObservable('mouseup touchend')
   //TODO needs BufferWithTime or something for making it behave faster
   var move = mouseMove.Merge(touchMove.Select(touchEvent)).Select(mousePosition)
   return delta(move.SkipUntil(startEvent).TakeUntil(end))
