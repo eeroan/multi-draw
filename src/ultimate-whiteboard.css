@@ -14,11 +14,11 @@ body {
   top: 0;
   left: 0;
   z-index: 99;
-  width: 20px;
-  height: 20px;
+  width: 25px;
+  height: 25px;
   background: red;
-  border-radius: 11px;
-  -moz-border-radius: 11px;
+  border-radius: 15px;
+  -moz-border-radius: 15px;
   border: 1px solid #F88;
 }
 
