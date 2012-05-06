@@ -21,6 +21,30 @@ touchMove.Subscribe(preventDefault)
 var touchEnd = $(document).toObservable('touchend')
 var move = touchMove.Select(touchEvent).Select(mousePosition)
 
+/*
+ var moves = mouseDown.SelectMany(function (imageOffset) {
+                return mouseMove
+                        .Do(function (event) { event.preventDefault(); })
+                        .Select(function (pos) {
+                            return {
+                               left: pos.clientX - imageOffset.left,
+                                top: pos.clientY - imageOffset.top
+                            };
+                        })
+                        .TakeUntil(mouseUp);
+            });
+            moves.Subscribe(function (pos) {
+                dragTarget.css("left", pos.left);
+                dragTarget.css("top", pos.top);
+            });
+
+ */
+
+function touchEvent(evt) {
+  //console.log(evt.originalEvent.touches)
+  return evt.originalEvent.touches[0]
+}
+
 var repeatedMoves = delta(move.SkipUntil(touchStart).TakeUntil(touchEnd)).Repeat()
 
 repeatedMoves.Subscribe(drawPath)
@@ -42,10 +66,6 @@ function delta(moves) {
   return moves.Zip(moves.Skip(1), argumentsAsList)
 }
 
-function touchEvent(evt) {
-  //console.log(evt.originalEvent.touches)
-  return evt.originalEvent.touches[0]
-}
 
 function preventDefault(e) {
   e.preventDefault()
