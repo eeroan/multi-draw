@@ -17,7 +17,7 @@ var gameField = $('#canvas').get(0).getContext("2d")
 drawGameField()
 var pencilDown = startOn($('#canvas'))
 var mouseMove = $(document).toObservable('mousemove')
-var touchMove = $(document).toObservable('touchmove').Where(notPinch)
+var touchMove = $(document).toObservable('touchmove')
 mouseMove.Merge(touchMove).Subscribe(preventDefault)
 var end = $(document).toObservable('mouseup touchend')
 var repeatedMoves = movesAfter(pencilDown).Repeat()
@@ -49,7 +49,7 @@ function delta(moves) {
 
 function startOn(container) {
   var mouseDown = container.toObservable('mousedown')
-  var touchStart = container.toObservable('touchstart').Where(notPinch)
+  var touchStart = container.toObservable('touchstart')
   return mouseDown.Merge(touchStart)
 }
 
