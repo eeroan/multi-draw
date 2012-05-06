@@ -15,12 +15,13 @@ $.fn.moveRelatively = function(pos) {
 
 var gameField = $('#canvas').get(0).getContext("2d")
 drawGameField()
-var pencilDown = startOn($('#canvas'))
-var mouseMove = $(document).toObservable('mousemove')
+var touchStart = $('#canvas').toObservable('touchstart')
 var touchMove = $(document).toObservable('touchmove')
-mouseMove.Merge(touchMove).Subscribe(preventDefault)
-var end = $(document).toObservable('mouseup touchend')
-var repeatedMoves = movesAfter(pencilDown).Repeat()
+touchMove.Subscribe(preventDefault)
+var touchEnd = $(document).toObservable('touchend')
+var move = touchMove.Select(touchEvent).Select(mousePosition)
+
+var repeatedMoves = delta(move.SkipUntil(touchStart).TakeUntil(touchEnd)).Repeat()
 
 repeatedMoves.Subscribe(drawPath)
 var clear = $('#clear').toObservable('click')
@@ -37,27 +38,12 @@ function drawGameField() {
   gameField = $.extend(gameField, penStyle)
 }
 
-function movesAfter(startEvent) {
-  //TODO needs BufferWithTime or something for making it behave faster
-  var move = mouseMove.Merge(touchMove.Select(touchEvent)).Select(mousePosition)
-  return delta(move.SkipUntil(startEvent).TakeUntil(end))
-}
-
 function delta(moves) {
   return moves.Zip(moves.Skip(1), argumentsAsList)
 }
 
-function startOn(container) {
-  var mouseDown = container.toObservable('mousedown')
-  var touchStart = container.toObservable('touchstart')
-  return mouseDown.Merge(touchStart)
-}
-
-function notPinch(evt) {
-  return evt.originalEvent.touches.length == 1
-}
-
 function touchEvent(evt) {
+  //console.log(evt.originalEvent.touches)
   return evt.originalEvent.touches[0]
 }
 
