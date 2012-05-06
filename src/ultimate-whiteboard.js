@@ -1,6 +1,10 @@
-var width = 1536
-var height = 2048
+var width = 768
+var height = 1024
 var penStyle = {strokeStyle: "rgba(100, 100, 200, 1.0)", lineWidth: 5, lineCap: "round"}
+$(window).bind('orientationchange', function(e){
+  e.preventDefault()
+})
+
 $.fn.moveRelatively = function(pos) {
   var oldX = parseInt(this.css('left'), 10)
   var oldY = parseInt(this.css('top'), 10)
