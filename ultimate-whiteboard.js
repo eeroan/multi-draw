@@ -15,39 +15,61 @@ $.fn.moveRelatively = function(pos) {
 
 var gameField = $('#canvas').get(0).getContext("2d")
 drawGameField()
+
 var touchStart = $('#canvas').toObservable('touchstart')
 var touchMove = $(document).toObservable('touchmove')
-touchMove.Subscribe(preventDefault)
 var touchEnd = $(document).toObservable('touchend')
-var move = touchMove.Select(touchEvent).Select(mousePosition)
 
-/*
- var moves = mouseDown.SelectMany(function (imageOffset) {
-                return mouseMove
-                        .Do(function (event) { event.preventDefault(); })
-                        .Select(function (pos) {
-                            return {
-                               left: pos.clientX - imageOffset.left,
-                                top: pos.clientY - imageOffset.top
-                            };
-                        })
-                        .TakeUntil(mouseUp);
-            });
-            moves.Subscribe(function (pos) {
-                dragTarget.css("left", pos.left);
-                dragTarget.css("top", pos.top);
-            });
+var move = touchStart.SelectMany(function (startPos) {
+  var changedTouch = startPos.originalEvent.changedTouches[0]
+  var id = changedTouch.identifier
+  console.log('mousedown',id)
+  var oldPos = {pageX:changedTouch.pageX, pageY:changedTouch.pageY}
+  return touchMove
+    .Do(preventDefault)
+    .Select(function(e) {
+      var grep = $.grep(e.originalEvent.touches, function(touch) {return touch.identifier == id})
+      console.log('map',e.originalEvent.touches)
+      console.log('grep',grep)
+      return grep[0]
+    })
+    //.TakeUntil(touchEnd)
+    //.Repeat()
+    .Do(function(e) {
+      console.log(e)
+        gameField.beginPath()
+        gameField.moveTo(oldPos.pageX, oldPos.pageY)
+        gameField.lineTo(e.pageX, e.pageY)
+        gameField.stroke()
+        gameField.closePath()
+      oldPos = {pageX:e.pageX, pageY:e.pageY}
+    })
+}).Repeat()
 
- */
-
-function touchEvent(evt) {
-  //console.log(evt.originalEvent.touches)
-  return evt.originalEvent.touches[0]
+move.Subscribe(function(e) {
+//    gameField.lineTo(e.pageX, e.pageY)
+//    gameField.stroke()
+})
+function preventDefault(e) {
+  e.preventDefault()
 }
 
-var repeatedMoves = delta(move.SkipUntil(touchStart).TakeUntil(touchEnd)).Repeat()
 
-repeatedMoves.Subscribe(drawPath)
+function delta(moves) {
+  return moves.Zip(moves.Skip(2), tupled)
+}
+
+function tupled() {return arguments}
+
+function drawPath(line) {
+  //console.log(line)
+  gameField.beginPath()
+  gameField.moveTo(line[0].pageX, line[0].pageY)
+  gameField.lineTo(line[1].pageX, line[1].pageY)
+  gameField.stroke()
+  gameField.closePath()
+}
+
 var clear = $('#clear').toObservable('click')
 clear.Subscribe(clearGameField)
 
@@ -60,34 +82,4 @@ function clearGameField() {
 function drawGameField() {
   gameField = $.extend(gameField, {strokeStyle: "rgba(0, 0, 0, 1.0)", lineWidth: 1,lineCap: "round"})
   gameField = $.extend(gameField, penStyle)
-}
-
-function delta(moves) {
-  return moves.Zip(moves.Skip(1), argumentsAsList)
-}
-
-
-function preventDefault(e) {
-  e.preventDefault()
-}
-
-function drawPath(line) {
-  gameField.beginPath()
-  gameField.moveTo.apply(gameField, line[0])
-  gameField.lineTo.apply(gameField, line[1])
-  gameField.stroke()
-  gameField.closePath()
-}
-
-function mousePosition(e) {
-  if ($(e.target).hasClass('player'))
-    return [e.clientX,e.clientY]
-  if (e.layerX) return [e.layerX, e.layerY]
-  if (e.offsetX) return [e.offsetX, e.offsetY]
-  var canvasDom = $('#canvas').get(0)
-  return [e.pageX - canvasDom.offsetLeft, e.pageY - canvasDom.offsetTop]
-}
-
-function argumentsAsList() {
-  return arguments
 }
