@@ -1,3 +1,4 @@
+document.title = 0
 Rx.Observable.prototype.SmartThrottle = function (ms) {
   return this.BufferWithTime(ms)
     .Where(function (arr) {return arr.length > 0})
@@ -55,7 +56,9 @@ function drawPath(line) {
   var deltaX = line[1].pageX - line[0].pageX
   var deltaY = line[1].pageY - line[0].pageY
   var length = parseInt(Math.sqrt(deltaX * deltaX + deltaY * deltaY))
-  gameField.lineWidth = parseInt(20 / Math.sqrt(length)) || 1
+  var lineWidth = parseInt(10 - length / 3)
+  if(lineWidth <= 0) lineWidth = 1
+  gameField.lineWidth = lineWidth
   gameField.beginPath()
   gameField.moveTo(line[0].pageX, line[0].pageY)
   gameField.lineTo(line[1].pageX, line[1].pageY)
