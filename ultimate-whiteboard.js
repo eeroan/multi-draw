@@ -20,16 +20,18 @@ var touchStart = $('#canvas').toObservable('touchstart')
 var touchMove = $(document).toObservable('touchmove')
 var touchEnd = $(document).toObservable('touchend')
 
-var move = touchStart.SelectMany(function (startPos) {
-  var changedTouch = startPos.originalEvent.changedTouches[0]
+var move = touchStart
+  .SelectMany(function(e) { return Rx.Observable.FromArray(e.originalEvent.changedTouches) })
+  .SelectMany(function (changedTouch) {
   var id = changedTouch.identifier
   console.log('mousedown',id)
   var oldPos = {pageX:changedTouch.pageX, pageY:changedTouch.pageY}
   return touchMove
     .Do(preventDefault)
-    .Select(function(e) {
-      var grep = $.grep(e.originalEvent.touches, function(touch) {return touch.identifier == id})
-      console.log('map',e.originalEvent.touches)
+    .Select(function(e) {return e.originalEvent.touches})
+    .Select(function(touches) {
+      var grep = $.grep(touches, function(touch) {return touch.identifier == id})
+      console.log('map',touches)
       console.log('grep',grep)
       return grep[0]
     })
