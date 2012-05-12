@@ -1,3 +1,8 @@
+Rx.Observable.prototype.SmartThrottle = function (ms) {
+  return this.BufferWithTime(ms)
+    .Where(function (arr) {return arr.length > 0})
+    .Select(function (arr) {return arr[arr.length - 1]})
+}
 var width = 768
 var height = 1024
 var penStyle = {strokeStyle:"rgba(100, 100, 200, 1.0)", lineWidth:5, lineCap:"round"}
@@ -5,62 +10,46 @@ $(window).bind('orientationchange', function (e) {
   e.preventDefault()
 })
 
-$.fn.moveRelatively = function (pos) {
-  var oldX = parseInt(this.css('left'), 10)
-  var oldY = parseInt(this.css('top'), 10)
-  var css = {left:(oldX + pos[0]) + 'px', top:(oldY + pos[1]) + 'px'}
-  this.css(css)
-  return this
-}
-
 var gameField = $('#canvas').get(0).getContext("2d")
 drawGameField()
 
 var touchStart = $('#canvas').toObservable('touchstart')
 var touchMove = $(document).toObservable('touchmove')
 var touchEnd = $(document).toObservable('touchend')
+var clearClick = $('#clear').toObservable('click')
 
-var move = touchStart
-  .SelectMany(function (e) { return Rx.Observable.FromArray(e.originalEvent.changedTouches) })
-  .SelectMany(
-  function (changedTouch) {
+var path = touchStart
+  .Select(changedTouches)
+  .SelectMany(function (changedTouches) { return Rx.Observable.FromArray(changedTouches) })
+  .SelectMany(function (changedTouch) {
     var id = changedTouch.identifier
-    var oldPos = {pageX:changedTouch.pageX, pageY:changedTouch.pageY}
+    var currentPos = coordinates(changedTouch)
     return touchMove
       .Do(preventDefault)
+      //.SmartThrottle(20)
       .Select(function (e) {return e.originalEvent.touches})
-      .Select(function (touches) {
-        var grep = $.grep(touches, function (touch) { return touch.identifier == id})
-        return grep[0]
+      .Select(function (touches) { return findByIdentifier(touches)[0] })
+      .TakeUntil(touchEnd.Select(changedTouches).Where(function (touches) { return findByIdentifier(touches).length > 0 }))
+      .Select(function (e) {
+        var previousPos = $.extend({}, currentPos)
+        currentPos = coordinates(e)
+        return [previousPos, currentPos]
       })
-      .TakeUntil(touchEnd.Where(function (e) {
-      var touches = e.originalEvent.changedTouches
-      var grep = $.grep(touches, function (touch) { return touch.identifier == id})
-      return grep.length > 0
-    }))
-      .Do(function (e) {
-        gameField.beginPath()
-        gameField.moveTo(oldPos.pageX, oldPos.pageY)
-        gameField.lineTo(e.pageX, e.pageY)
-        gameField.stroke()
-        gameField.closePath()
-        oldPos = {pageX:e.pageX, pageY:e.pageY}
-      })
-  }).Repeat()
+      .Where(hasChaged)
+    function findByIdentifier(touches) { return $.grep(touches, function (touch) { return touch.identifier == id}) }
+  })
 
-move.Subscribe(function (e) {
-//    gameField.lineTo(e.pageX, e.pageY)
-//    gameField.stroke()
-})
-function preventDefault(e) {
-  e.preventDefault()
-}
+path.Subscribe(drawPath)
 
-function delta(moves) {
-  return moves.Zip(moves.Skip(2), tupled)
-}
+clearClick.Subscribe(clearGameField)
 
-function tupled() {return arguments}
+function hasChaged(line) {return line[0].pageX != line[1].pageX || line[0].pageY != line[1].pageY}
+
+function coordinates(e) { return {pageX:e.pageX, pageY:e.pageY} }
+
+function changedTouches(e) {return e.originalEvent.changedTouches}
+
+function preventDefault(e) { e.preventDefault() }
 
 function drawPath(line) {
   gameField.beginPath()
@@ -69,9 +58,6 @@ function drawPath(line) {
   gameField.stroke()
   gameField.closePath()
 }
-
-var clear = $('#clear').toObservable('click')
-clear.Subscribe(clearGameField)
 
 function clearGameField() {
   gameField.beginPath()
