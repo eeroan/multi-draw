@@ -52,6 +52,10 @@ function changedTouches(e) {return e.originalEvent.changedTouches}
 function preventDefault(e) { e.preventDefault() }
 
 function drawPath(line) {
+  var deltaX = line[1].pageX - line[0].pageX
+  var deltaY = line[1].pageY - line[0].pageY
+  var length = parseInt(Math.sqrt(deltaX * deltaX + deltaY * deltaY))
+  gameField.lineWidth = parseInt(20 / Math.sqrt(length)) || 1
   gameField.beginPath()
   gameField.moveTo(line[0].pageX, line[0].pageY)
   gameField.lineTo(line[1].pageX, line[1].pageY)
@@ -65,6 +69,7 @@ function clearGameField() {
   gameField.closePath()
   drawGameField()
 }
+
 function drawGameField() {
   gameField = $.extend(gameField, {strokeStyle:"rgba(0, 0, 0, 1.0)", lineWidth:1, lineCap:"round"})
   gameField = $.extend(gameField, penStyle)
