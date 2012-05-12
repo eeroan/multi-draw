@@ -38,7 +38,6 @@ var move = touchStart
       return grep.length > 0
     }))
     .Do(function(e) {
-      console.log(e)
         gameField.beginPath()
         gameField.moveTo(oldPos.pageX, oldPos.pageY)
         gameField.lineTo(e.pageX, e.pageY)
@@ -64,7 +63,6 @@ function delta(moves) {
 function tupled() {return arguments}
 
 function drawPath(line) {
-  //console.log(line)
   gameField.beginPath()
   gameField.moveTo(line[0].pageX, line[0].pageY)
   gameField.lineTo(line[1].pageX, line[1].pageY)
