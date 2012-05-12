@@ -1,32 +1,4 @@
-body {
-  position: relative;
-  margin:0;
-}
-
-#canvas {
-  border: 1px solid #000;
-  position: relative;
-  margin:0;
-}
-
-.player {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 99;
-  width: 25px;
-  height: 25px;
-  background: red;
-  border-radius: 15px;
-  -moz-border-radius: 15px;
-  border: 1px solid #F88;
-}
-
-#clear {
-  display:block;
-    position:absolute;
-    top:0;
-    left:0;
-    width:100px;
-    height:50px;
-}
+body { position: relative; margin: 0; }
+#canvas { border: 1px solid #000; position: relative; margin: 0; }
+.player { position: absolute; top: 0; left: 0; z-index: 99; width: 25px; height: 25px; background: red; border-radius: 15px; -moz-border-radius: 15px; border: 1px solid #F88; }
+#clear { display: block; position: absolute; top: 10px; left: 0; padding: 10px 10px; color: #a00; border-radius: 0; boder:none; background: #eee;font: 30px arial,serif; font-weight: bold;}
