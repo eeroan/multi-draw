@@ -24,19 +24,19 @@ var move = touchStart
   .SelectMany(function(e) { return Rx.Observable.FromArray(e.originalEvent.changedTouches) })
   .SelectMany(function (changedTouch) {
   var id = changedTouch.identifier
-  console.log('mousedown',id)
   var oldPos = {pageX:changedTouch.pageX, pageY:changedTouch.pageY}
   return touchMove
     .Do(preventDefault)
     .Select(function(e) {return e.originalEvent.touches})
     .Select(function(touches) {
-      var grep = $.grep(touches, function(touch) {return touch.identifier == id})
-      console.log('map',touches)
-      console.log('grep',grep)
+      var grep = $.grep(touches, function(touch) { return touch.identifier == id})
       return grep[0]
     })
-    //.TakeUntil(touchEnd)
-    //.Repeat()
+    .TakeUntil(touchEnd.Where(function(e) {
+      var touches = e.originalEvent.changedTouches
+      var grep = $.grep(touches, function(touch) { return touch.identifier == id})
+      return grep.length > 0
+    }))
     .Do(function(e) {
       console.log(e)
         gameField.beginPath()
