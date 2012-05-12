@@ -18,6 +18,7 @@ var touchStart = $('#canvas').toObservable('touchstart')
 var touchMove = $(document).toObservable('touchmove')
 var touchEnd = $(document).toObservable('touchend')
 var clearClick = $('#clear').toObservable('click')
+var shake =  $(window).toObservable('shake')
 
 var path = touchStart
   .Select(changedTouches)
@@ -36,15 +37,15 @@ var path = touchStart
         currentPos = coordinates(e)
         return [previousPos, currentPos]
       })
-      .Where(hasChaged)
+      .Where(hasChanged)
     function findByIdentifier(touches) { return $.grep(touches, function (touch) { return touch.identifier == id}) }
   })
 
 path.Subscribe(drawPath)
 
-clearClick.Subscribe(clearGameField)
+clearClick.Merge(shake).Subscribe(clearGameField)
 
-function hasChaged(line) {return line[0].pageX != line[1].pageX || line[0].pageY != line[1].pageY}
+function hasChanged(line) {return line[0].pageX != line[1].pageX || line[0].pageY != line[1].pageY}
 
 function coordinates(e) { return {pageX:e.pageX, pageY:e.pageY} }
 
