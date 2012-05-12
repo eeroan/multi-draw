@@ -1,4 +1,16 @@
-document.title = 0
+var colors = $.map([
+  '000000',
+  'a52020',
+  'd269ee',
+  '6495ed',
+  '00008b',
+  '006400',
+  'ff8c00',
+  '9932cc',
+  '808080',
+  '2e8b57'
+], function (colorInHex) {return '#' + colorInHex})
+
 Rx.Observable.prototype.SmartThrottle = function (ms) {
   return this.BufferWithTime(ms)
     .Where(function (arr) {return arr.length > 0})
@@ -18,14 +30,15 @@ var touchStart = $('#canvas').toObservable('touchstart')
 var touchMove = $(document).toObservable('touchmove')
 var touchEnd = $(document).toObservable('touchend')
 var clearClick = $('#clear').toObservable('click')
-var shake =  $(window).toObservable('shake')
-
+var shake = $(window).toObservable('shake')
+var index = 0
 var path = touchStart
   .Select(changedTouches)
   .SelectMany(function (changedTouches) { return Rx.Observable.FromArray(changedTouches) })
   .SelectMany(function (changedTouch) {
     var id = changedTouch.identifier
     var currentPos = coordinates(changedTouch)
+    var colorIndex = index++
     return touchMove
       .Do(preventDefault)
       //.SmartThrottle(20)
@@ -35,7 +48,7 @@ var path = touchStart
       .Select(function (e) {
         var previousPos = $.extend({}, currentPos)
         currentPos = coordinates(e)
-        return [previousPos, currentPos]
+        return [previousPos, currentPos, colors[colorIndex % colors.length]]
       })
       .Where(hasChanged)
     function findByIdentifier(touches) { return $.grep(touches, function (touch) { return touch.identifier == id}) }
@@ -53,16 +66,18 @@ function changedTouches(e) {return e.originalEvent.changedTouches}
 
 function preventDefault(e) { e.preventDefault() }
 
-function drawPath(line) {
-  var deltaX = line[1].pageX - line[0].pageX
-  var deltaY = line[1].pageY - line[0].pageY
+function drawPath(lineAndColor) {
+  var deltaX = lineAndColor[1].pageX - lineAndColor[0].pageX
+  var deltaY = lineAndColor[1].pageY - lineAndColor[0].pageY
+  var color = lineAndColor[2]
   var length = parseInt(Math.sqrt(deltaX * deltaX + deltaY * deltaY))
   var lineWidth = parseInt(10 - length / 3)
   if(lineWidth <= 0) lineWidth = 1
   gameField.lineWidth = lineWidth
+  gameField.strokeStyle = color
   gameField.beginPath()
-  gameField.moveTo(line[0].pageX, line[0].pageY)
-  gameField.lineTo(line[1].pageX, line[1].pageY)
+  gameField.moveTo(lineAndColor[0].pageX, lineAndColor[0].pageY)
+  gameField.lineTo(lineAndColor[1].pageX, lineAndColor[1].pageY)
   gameField.stroke()
   gameField.closePath()
 }
