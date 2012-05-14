@@ -33,6 +33,25 @@ var touchEnd = $(document).toObservable('touchend')
 var clearClick = $('#clear').toObservable('click')
 var shake = $(window).toObservable('shake')
 var index = 0
+
+var mouseDown = canvas.toObservable('mousedown')
+var mouseMove = canvas.toObservable('mousemove')
+var mouseUp = canvas.toObservable('mouseup')
+var mouseDraw = mouseDown.SelectMany(function (e) {
+  var colorIndex = index++
+  var currentPos = coordinates(e)
+  return mouseMove
+    .Do(preventDefault)
+    .TakeUntil(mouseUp)
+    .Select(function (e) {
+      var previousPos = $.extend({}, currentPos)
+      currentPos = coordinates(e)
+      return [previousPos, currentPos, colorModulo(colorIndex)]
+    })
+})
+
+mouseDraw.Subscribe(drawPath)
+
 function colorModulo(colorIndex) {
   return colors[colorIndex % colors.length]
 }
