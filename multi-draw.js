@@ -20,60 +20,62 @@ $(window).bind('orientationchange', function (e) {
 
 var canvas = $('#canvas')
 var gameField = canvas.get(0).getContext("2d")
-drawGameField()
-
-var touchStart = canvas.toObservable('touchstart')
-var touchMove = $(document).toObservable('touchmove')
-var touchEnd = $(document).toObservable('touchend')
+var index = 0
 var clearClick = $('#clear').toObservable('click')
 var shake = $(window).toObservable('shake')
-var index = 0
+clearClick.Merge(shake).Subscribe(clearGameField)
 
-var mouseDown = canvas.toObservable('mousedown')
-var mouseMove = canvas.toObservable('mousemove')
-var mouseUp = canvas.toObservable('mouseup')
-var mouseDraw = mouseDown.SelectMany(function (e) {
-  var colorIndex = index++
-  var currentPos = coordinates(e)
-  return mouseMove
-    .Do(preventDefault)
-    .TakeUntil(mouseUp)
-    .Select(function (e) {
-      var previousPos = $.extend({}, currentPos)
-      currentPos = coordinates(e)
-      return [previousPos, currentPos, colorModulo(colorIndex)]
+drawGameField()
+initBrowserVersion()
+initIpadVersion()
+
+function initIpadVersion() {
+  var touchStart = canvas.toObservable('touchstart')
+  var touchMove = $(document).toObservable('touchmove')
+  var touchEnd = $(document).toObservable('touchend')
+  var path = touchStart
+    .Select(changedTouches)
+    .SelectMany(function (changedTouches) { return Rx.Observable.FromArray(changedTouches) })
+    .SelectMany(function (changedTouch) {
+      var id = changedTouch.identifier
+      var currentPos = coordinates(changedTouch)
+      var colorIndex = index++
+      return touchMove
+        .Do(preventDefault)
+        .Select(function (e) {return e.originalEvent.touches})
+        .Select(function (touches) { return findByIdentifier(touches)[0] })
+        .TakeUntil(touchEnd.Select(changedTouches).Where(function (touches) { return findByIdentifier(touches).length > 0 }))
+        .Select(function (e) {
+          var previousPos = $.extend({}, currentPos)
+          currentPos = coordinates(e)
+          return [previousPos, currentPos, colorModulo(colorIndex)]
+        })
+        .Where(hasChanged)
+      function findByIdentifier(touches) { return $.grep(touches, function (touch) { return touch.identifier == id}) }
     })
-})
-
-mouseDraw.Subscribe(drawPath)
-
-function colorModulo(colorIndex) {
-  return colors[colorIndex % colors.length]
+  path.Subscribe(drawPath)
 }
-var path = touchStart
-  .Select(changedTouches)
-  .SelectMany(function (changedTouches) { return Rx.Observable.FromArray(changedTouches) })
-  .SelectMany(function (changedTouch) {
-    var id = changedTouch.identifier
-    var currentPos = coordinates(changedTouch)
+
+function initBrowserVersion() {
+  var mouseDown = canvas.toObservable('mousedown')
+  var mouseMove = canvas.toObservable('mousemove')
+  var mouseUp = canvas.toObservable('mouseup')
+  var mouseDraw = mouseDown.SelectMany(function (e) {
     var colorIndex = index++
-    return touchMove
+    var currentPos = coordinates(e)
+    return mouseMove
       .Do(preventDefault)
-      .Select(function (e) {return e.originalEvent.touches})
-      .Select(function (touches) { return findByIdentifier(touches)[0] })
-      .TakeUntil(touchEnd.Select(changedTouches).Where(function (touches) { return findByIdentifier(touches).length > 0 }))
+      .TakeUntil(mouseUp)
       .Select(function (e) {
         var previousPos = $.extend({}, currentPos)
         currentPos = coordinates(e)
         return [previousPos, currentPos, colorModulo(colorIndex)]
       })
-      .Where(hasChanged)
-    function findByIdentifier(touches) { return $.grep(touches, function (touch) { return touch.identifier == id}) }
   })
+  mouseDraw.Subscribe(drawPath)
+}
 
-path.Subscribe(drawPath)
-
-clearClick.Merge(shake).Subscribe(clearGameField)
+function colorModulo(colorIndex) { return colors[colorIndex % colors.length] }
 
 function hasChanged(line) {return line[0].pageX != line[1].pageX || line[0].pageY != line[1].pageY}
 
