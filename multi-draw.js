@@ -23,10 +23,11 @@ $(window).bind('orientationchange', function (e) {
   e.preventDefault()
 })
 
-var gameField = $('#canvas').get(0).getContext("2d")
+var canvas = $('#canvas')
+var gameField = canvas.get(0).getContext("2d")
 drawGameField()
 
-var touchStart = $('#canvas').toObservable('touchstart')
+var touchStart = canvas.toObservable('touchstart')
 var touchMove = $(document).toObservable('touchmove')
 var touchEnd = $(document).toObservable('touchend')
 var clearClick = $('#clear').toObservable('click')
