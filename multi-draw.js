@@ -70,9 +70,9 @@ function drawPath(lineAndColor) {
   var deltaX = lineAndColor[1].pageX - lineAndColor[0].pageX
   var deltaY = lineAndColor[1].pageY - lineAndColor[0].pageY
   var color = lineAndColor[2]
-  var length = parseInt(Math.sqrt(deltaX * deltaX + deltaY * deltaY))
+  var length = Math.sqrt(deltaX * deltaX + deltaY * deltaY)
   var lineWidth = parseInt(10 - length / 3)
-  if(lineWidth <= 0) lineWidth = 1
+  if(lineWidth <= 2) lineWidth = 2
   gameField.lineWidth = lineWidth
   gameField.strokeStyle = color
   gameField.beginPath()
