@@ -90,10 +90,12 @@ function drawPath(lineAndColor) {
   var deltaY = lineAndColor[1].pageY - lineAndColor[0].pageY
   var color = lineAndColor[2]
   var length = Math.sqrt(deltaX * deltaX + deltaY * deltaY)
+  var opacity = 1 - length / 20
+  if(opacity < 0.1) opacity = 0.2
   var lineWidth = parseInt(10 - length / 3)
   if(lineWidth <= 2) lineWidth = 2
   gameField.lineWidth = lineWidth
-  gameField.strokeStyle = color
+  gameField.strokeStyle = hex2rgb(color, opacity)
   gameField.beginPath()
   gameField.moveTo(lineAndColor[0].pageX, lineAndColor[0].pageY)
   gameField.lineTo(lineAndColor[1].pageX, lineAndColor[1].pageY)
@@ -111,4 +113,18 @@ function clearGameField() {
 function drawGameField() {
   gameField = $.extend(gameField, {strokeStyle:"rgba(0, 0, 0, 1.0)", lineWidth:1, lineCap:"round"})
   gameField = $.extend(gameField, penStyle)
+}
+
+function hex2rgb(hex, opacity) {
+  var rgb = hex.replace('#', '').match(/(.{2})/g)
+  var i = 3
+  while(i--) {
+    rgb[i] = parseInt(rgb[i], 16)
+  }
+
+  if(typeof opacity == 'undefined') {
+    return 'rgb(' + rgb.join(', ') + ')'
+  }
+
+  return 'rgba(' + rgb.join(', ') + ', ' + opacity + ')'
 }
