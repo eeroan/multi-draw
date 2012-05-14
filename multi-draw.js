@@ -32,6 +32,9 @@ var touchEnd = $(document).toObservable('touchend')
 var clearClick = $('#clear').toObservable('click')
 var shake = $(window).toObservable('shake')
 var index = 0
+function colorModulo(colorIndex) {
+  return colors[colorIndex % colors.length]
+}
 var path = touchStart
   .Select(changedTouches)
   .SelectMany(function (changedTouches) { return Rx.Observable.FromArray(changedTouches) })
@@ -48,7 +51,7 @@ var path = touchStart
       .Select(function (e) {
         var previousPos = $.extend({}, currentPos)
         currentPos = coordinates(e)
-        return [previousPos, currentPos, colors[colorIndex % colors.length]]
+        return [previousPos, currentPos, colorModulo(colorIndex)]
       })
       .Where(hasChanged)
     function findByIdentifier(touches) { return $.grep(touches, function (touch) { return touch.identifier == id}) }
