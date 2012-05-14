@@ -11,11 +11,6 @@ var colors = $.map([
   '2e8b57'
 ], function (colorInHex) {return '#' + colorInHex})
 
-Rx.Observable.prototype.SmartThrottle = function (ms) {
-  return this.BufferWithTime(ms)
-    .Where(function (arr) {return arr.length > 0})
-    .Select(function (arr) {return arr[arr.length - 1]})
-}
 var width = 768
 var height = 1024
 var penStyle = {strokeStyle:"rgba(100, 100, 200, 1.0)", lineWidth:5, lineCap:"round"}
@@ -64,7 +59,6 @@ var path = touchStart
     var colorIndex = index++
     return touchMove
       .Do(preventDefault)
-      //.SmartThrottle(20)
       .Select(function (e) {return e.originalEvent.touches})
       .Select(function (touches) { return findByIdentifier(touches)[0] })
       .TakeUntil(touchEnd.Select(changedTouches).Where(function (touches) { return findByIdentifier(touches).length > 0 }))
