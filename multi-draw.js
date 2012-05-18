@@ -40,6 +40,7 @@ function initIpadVersion() {
       var id = changedTouch.identifier
       var currentPos = coordinates(changedTouch)
       var colorIndex = index++
+      drawPath([currentPos, {pageX:currentPos.pageX+1, pageY:currentPos.pageY+1}, colorModulo(colorIndex)])
       return touchMove
         .Do(preventDefault)
         .Select(function (e) {return e.originalEvent.touches})
@@ -63,6 +64,7 @@ function initBrowserVersion() {
   var mouseDraw = mouseDown.SelectMany(function (e) {
     var colorIndex = index++
     var currentPos = coordinates(e)
+    drawPath([coordinates(e), coordinates(e), colorModulo(colorIndex)])
     return mouseMove
       .Do(preventDefault)
       .TakeUntil(mouseUp)
