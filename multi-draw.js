@@ -94,8 +94,8 @@ function drawPath(lineAndColor) {
   var length = Math.sqrt(deltaX * deltaX + deltaY * deltaY)
   var opacity = 1 - length / 20
   if(opacity < 0.1) opacity = 0.2
-  var lineWidth = parseInt(10 - length / 3)
-  if(lineWidth <= 2) lineWidth = 2
+  var lineWidth = parseInt(20 - length / 4)
+  if(lineWidth <= 4) lineWidth = 4
   gameField.lineWidth = lineWidth
   gameField.strokeStyle = hex2rgb(color, opacity)
   gameField.beginPath()
