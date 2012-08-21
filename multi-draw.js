@@ -21,9 +21,10 @@ $(window).bind('orientationchange', function (e) {
 var canvas = $('#canvas')
 var gameField = canvas.get(0).getContext("2d")
 var index = 0
-var clearClick = $('#clear').onAsObservable('click')
+var clearClick = $('#clear').onAsObservable('click').throttle(100).doAction(preventDefault)
 var shake = $(window).onAsObservable('shake')
-clearClick.merge(shake).subscribe(clearGameField)
+clearClick.subscribe(clearGameField)
+shake.subscribe(clearGameField)
 
 drawGameField()
 initBrowserVersion()
