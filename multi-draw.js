@@ -92,8 +92,7 @@ function drawPath(lineAndColor) {
   var deltaY = lineAndColor[1].pageY - lineAndColor[0].pageY
   var color = lineAndColor[2]
   var length = Math.sqrt(deltaX * deltaX + deltaY * deltaY)
-  var opacity = 1 - length / 20
-  if(opacity < 0.1) opacity = 0.2
+  var opacity = 1
   var lineWidth = parseInt(20 - length / 4)
   if(lineWidth <= 4) lineWidth = 4
   gameField.lineWidth = lineWidth
@@ -103,6 +102,11 @@ function drawPath(lineAndColor) {
   gameField.lineTo(lineAndColor[1].pageX, lineAndColor[1].pageY)
   gameField.stroke()
   gameField.closePath()
+
+  function getOpacity(length) {
+    var opacity = 1 - length / 20
+    return opacity > 0.1 ? opacity : 0.2;
+  }
 }
 
 function clearGameField() {
