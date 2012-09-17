@@ -14,19 +14,18 @@ var colors = $.map([
 var width = 768
 var height = 1024
 var penStyle = {strokeStyle:"rgba(100, 100, 200, 1.0)", lineWidth:5, lineCap:"round"}
-$(window).bind('orientationchange', function (e) {
-  e.preventDefault()
-})
+var win = $(window)
+win.bind('orientationchange', preventDefault)
 
 var canvas = $('#canvas')
-var gameField = canvas.get(0).getContext("2d")
+var gameField = $.extend(canvas.get(0).getContext("2d"), penStyle)
+
 var index = 0
 var clearClick = $('#clear').onAsObservable('click').throttle(100).doAction(preventDefault)
-var shake = $(window).onAsObservable('shake')
+var shake = win.onAsObservable('shake')
 clearClick.subscribe(clearGameField)
 shake.subscribe(clearGameField)
 
-drawGameField()
 initBrowserVersion()
 initTouchVersion()
 
@@ -38,10 +37,9 @@ function initTouchVersion() {
     .select(changedTouches)
     .selectMany(function (changedTouches) { return Rx.Observable.fromArray(changedTouches) })
     .selectMany(function (changedTouch) {
-      var id = changedTouch.identifier
       var currentPos = coordinates(changedTouch)
       var colorIndex = index++
-      drawPath([currentPos, {pageX:currentPos.pageX+1, pageY:currentPos.pageY+1}, colorModulo(colorIndex)])
+      drawPath([currentPos, {pageX:currentPos.pageX + 1, pageY:currentPos.pageY + 1}, colorModulo(colorIndex)])
       return touchMove
         .doAction(preventDefault)
         .select(function (e) {return e.originalEvent.touches})
@@ -53,7 +51,7 @@ function initTouchVersion() {
           return [previousPos, currentPos, colorModulo(colorIndex)]
         })
         .where(hasChanged)
-      function findByIdentifier(touches) { return $.grep(touches, function (touch) { return touch.identifier == id}) }
+      function findByIdentifier(touches) { return $.grep(touches, function (touch) { return touch.identifier == changedTouch.identifier}) }
     })
   path.subscribe(drawPath)
 }
@@ -107,21 +105,9 @@ function drawPath(lineAndColor) {
 
 function clearGameField() { document.location = document.location.href }
 
-function drawGameField() {
-  gameField = $.extend(gameField, {strokeStyle:"rgba(0, 0, 0, 1.0)", lineWidth:1, lineCap:"round"})
-  gameField = $.extend(gameField, penStyle)
-}
-
 function hex2rgb(hex, opacity) {
   var rgb = hex.replace('#', '').match(/(.{2})/g)
   var i = 3
-  while(i--) {
-    rgb[i] = parseInt(rgb[i], 16)
-  }
-
-  if(typeof opacity == 'undefined') {
-    return 'rgb(' + rgb.join(', ') + ')'
-  }
-
-  return 'rgba(' + rgb.join(', ') + ', ' + opacity + ')'
+  while(i--) rgb[i] = parseInt(rgb[i], 16)
+  return typeof opacity == 'undefined' ? 'rgb(' + rgb.join(', ') + ')' : 'rgba(' + rgb.join(', ') + ', ' + opacity + ')'
 }
