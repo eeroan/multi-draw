@@ -28,9 +28,9 @@ shake.subscribe(clearGameField)
 
 drawGameField()
 initBrowserVersion()
-initIpadVersion()
+initTouchVersion()
 
-function initIpadVersion() {
+function initTouchVersion() {
   var touchStart = canvas.onAsObservable('touchstart')
   var touchMove = $(document).onAsObservable('touchmove')
   var touchEnd = $(document).onAsObservable('touchend')
@@ -103,19 +103,9 @@ function drawPath(lineAndColor) {
   gameField.lineTo(lineAndColor[1].pageX, lineAndColor[1].pageY)
   gameField.stroke()
   gameField.closePath()
-
-  function getOpacity(length) {
-    var opacity = 1 - length / 20
-    return opacity > 0.1 ? opacity : 0.2;
-  }
 }
 
-function clearGameField() {
-  gameField.beginPath()
-  gameField.clearRect(0, 0, width, height)
-  gameField.closePath()
-  drawGameField()
-}
+function clearGameField() { document.location = document.location.href }
 
 function drawGameField() {
   gameField = $.extend(gameField, {strokeStyle:"rgba(0, 0, 0, 1.0)", lineWidth:1, lineCap:"round"})
