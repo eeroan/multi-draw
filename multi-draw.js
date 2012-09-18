@@ -34,24 +34,24 @@ function initTouchVersion() {
   var touchMove = $(document).onAsObservable('touchmove')
   var touchEnd = $(document).onAsObservable('touchend')
   var path = touchStart
-    .select(changedTouches)
-    .selectMany(function (changedTouches) { return Rx.Observable.fromArray(changedTouches) })
-    .selectMany(function (changedTouch) {
-      var currentPos = coordinates(changedTouch)
+    .select(movedTouches)
+    .selectMany(function (movedTouches) { return Rx.Observable.fromArray(movedTouches) })
+    .selectMany(function (movedTouch) {
+      var currentPos = coordinates(movedTouch)
       var colorIndex = index++
       drawPath([currentPos, {pageX:currentPos.pageX + 1, pageY:currentPos.pageY + 1}, colorModulo(colorIndex)])
       return touchMove
         .doAction(preventDefault)
         .select(function (e) {return e.originalEvent.touches})
         .select(function (touches) { return findByIdentifier(touches)[0] })
-        .takeUntil(touchEnd.select(changedTouches).where(function (touches) { return findByIdentifier(touches).length > 0 }))
+        .takeUntil(touchEnd.select(movedTouches).where(function (touches) { return findByIdentifier(touches).length > 0 }))
         .select(function (e) {
           var previousPos = $.extend({}, currentPos)
           currentPos = coordinates(e)
           return [previousPos, currentPos, colorModulo(colorIndex)]
         })
         .where(hasChanged)
-      function findByIdentifier(touches) { return $.grep(touches, function (touch) { return touch.identifier == changedTouch.identifier}) }
+      function findByIdentifier(touches) { return $.grep(touches, function (touch) { return touch.identifier == movedTouch.identifier}) }
     })
   path.subscribe(drawPath)
 }
@@ -80,9 +80,9 @@ function colorModulo(colorIndex) { return colors[colorIndex % colors.length] }
 
 function hasChanged(line) {return line[0].pageX != line[1].pageX || line[0].pageY != line[1].pageY}
 
-function coordinates(e) { return {pageX:e.pageX, pageY:e.pageY} }
+function coordinates(e) { return {pageX:e.pageX, pageY:e.pageY, timeStamp: e.timeStamp } }
 
-function changedTouches(e) {return e.originalEvent.changedTouches}
+function movedTouches(e) {return e.originalEvent.changedTouches}
 
 function preventDefault(e) { e.preventDefault() }
 
@@ -90,10 +90,16 @@ function drawPath(lineAndColor) {
   var deltaX = lineAndColor[1].pageX - lineAndColor[0].pageX
   var deltaY = lineAndColor[1].pageY - lineAndColor[0].pageY
   var color = lineAndColor[2]
+  var time = lineAndColor[1].timeStamp - lineAndColor[0].timeStamp
   var length = Math.sqrt(deltaX * deltaX + deltaY * deltaY)
+  var speed = length / time
+  console.log(speed)
+  var lineWidth = ((time*time)/(length)) +2
+  if(lineWidth>20) lineWidth = 20
+  //console.log(lineWidth)
   var opacity = 1
-  var lineWidth = parseInt(20 - length / 4)
-  if(lineWidth <= 4) lineWidth = 4
+  //var lineWidth = parseInt(20 - length / 4)
+  //if(lineWidth <= 4) lineWidth = 4
   gameField.lineWidth = lineWidth
   gameField.strokeStyle = hex2rgb(color, opacity)
   gameField.beginPath()
