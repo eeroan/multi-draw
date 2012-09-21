@@ -93,13 +93,9 @@ function drawPath(lineAndColor) {
   var time = lineAndColor[1].timeStamp - lineAndColor[0].timeStamp
   var length = Math.sqrt(deltaX * deltaX + deltaY * deltaY)
   var speed = length / time
-  console.log(speed)
-  var lineWidth = ((time*time)/(length)) +2
+  var lineWidth = (time/length) * 2 +2
   if(lineWidth>20) lineWidth = 20
-  //console.log(lineWidth)
   var opacity = 1
-  //var lineWidth = parseInt(20 - length / 4)
-  //if(lineWidth <= 4) lineWidth = 4
   gameField.lineWidth = lineWidth
   gameField.strokeStyle = hex2rgb(color, opacity)
   gameField.beginPath()
