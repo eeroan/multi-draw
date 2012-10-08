@@ -21,7 +21,9 @@ var canvas = $('#canvas')
 var gameField = $.extend(canvas.get(0).getContext("2d"), penStyle)
 
 var index = 0
-var clearClick = $('#clear').onAsObservable('click').throttle(100).doAction(preventDefault)
+var clearButton = $('#clear')
+clearButton.onAsObservable('touchmove').subscribe(preventDefault)
+var clearClick = clearButton.onAsObservable('click').throttle(100).doAction(preventDefault)
 var shake = win.onAsObservable('shake')
 clearClick.subscribe(clearGameField)
 shake.subscribe(clearGameField)
