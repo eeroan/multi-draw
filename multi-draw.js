@@ -25,8 +25,8 @@ var clearButton = $('#clear')
 clearButton.onAsObservable('touchmove').subscribe(preventDefault)
 var clearClick = clearButton.onAsObservable('click').throttle(100).doAction(preventDefault)
 var shake = win.onAsObservable('shake')
-clearClick.subscribe(clearGameField)
-shake.subscribe(clearGameField)
+clearClick.subscribe(reload)
+shake.subscribe(reload)
 
 initBrowserVersion()
 initTouchVersion()
@@ -45,7 +45,7 @@ function initTouchVersion() {
       return touchMove
         .doAction(preventDefault)
         .select(function (e) {return e.originalEvent.touches})
-        .select(function (touches) { return findByIdentifier(touches)[0] })
+        .select(function (touches) { return  findByIdentifier(touches, true)[0] || reload() })
         .takeUntil(touchEnd.select(movedTouches).where(function (touches) { return findByIdentifier(touches).length > 0 }))
         .select(function (e) {
           var previousPos = $.extend({}, currentPos)
@@ -82,7 +82,7 @@ function colorModulo(colorIndex) { return colors[colorIndex % colors.length] }
 
 function hasChanged(line) {return line[0].pageX != line[1].pageX || line[0].pageY != line[1].pageY}
 
-function coordinates(e) { return {pageX:e.pageX, pageY:e.pageY, timeStamp: new Date().getTime() } }
+function coordinates(e) { return {pageX:e.pageX, pageY:e.pageY, timeStamp:new Date().getTime() } }
 
 function movedTouches(e) {return e.originalEvent.changedTouches}
 
@@ -96,7 +96,7 @@ function drawPath(lineAndColor) {
   var length = Math.sqrt(deltaX * deltaX + deltaY * deltaY)
   var speed = length / time
   var equation = time / length * 5 + 2
-  if(equation>20) equation = 20
+  if(equation > 20) equation = 20
   var opacity = 1
   gameField.lineWidth = equation
   gameField.strokeStyle = hex2rgb(color, opacity)
@@ -107,7 +107,7 @@ function drawPath(lineAndColor) {
   gameField.closePath()
 }
 
-function clearGameField() { document.location = document.location.href }
+function reload() { document.location = document.location.href }
 
 function hex2rgb(hex, opacity) {
   var rgb = hex.replace('#', '').match(/(.{2})/g)
