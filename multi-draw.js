@@ -80,7 +80,7 @@ function colorModulo(colorIndex) { return colors[colorIndex % colors.length] }
 
 function hasChanged(line) {return line[0].pageX != line[1].pageX || line[0].pageY != line[1].pageY}
 
-function coordinates(e) { return {pageX:e.pageX, pageY:e.pageY, timeStamp: e.timeStamp } }
+function coordinates(e) { return {pageX:e.pageX, pageY:e.pageY, timeStamp: new Date().getTime() } }
 
 function movedTouches(e) {return e.originalEvent.changedTouches}
 
@@ -93,10 +93,10 @@ function drawPath(lineAndColor) {
   var time = lineAndColor[1].timeStamp - lineAndColor[0].timeStamp
   var length = Math.sqrt(deltaX * deltaX + deltaY * deltaY)
   var speed = length / time
-  var lineWidth = (time/length) * 2 +2
-  if(lineWidth>20) lineWidth = 20
+  var equation = time / length * 5 + 2
+  if(equation>20) equation = 20
   var opacity = 1
-  gameField.lineWidth = lineWidth
+  gameField.lineWidth = equation
   gameField.strokeStyle = hex2rgb(color, opacity)
   gameField.beginPath()
   gameField.moveTo(lineAndColor[0].pageX, lineAndColor[0].pageY)
