@@ -1,5 +1,5 @@
 body { position: relative; margin: 0; }
-#canvas { border: 1px solid #000; position: relative; margin: 0; }
+#canvas { border: 1px solid #000; position: relative; margin: 0;background: -webkit-radial-gradient(center, circle cover, white 0%, white 70%, #efefef 90%,#ccc 100%);}
 .player { position: absolute; top: 0; left: 0; z-index: 99; width: 25px; height: 25px; background: red; border-radius: 15px; -moz-border-radius: 15px; border: 1px solid #F88; }
 #clear { display: block; position: absolute; top: 20px; left: 5px; width:60px; height: 60px;  boder:1px solid #999; border-radius: 50px; background:-webkit-linear-gradient(#fff, #ccc); line-height:0; font-weight: bold; }
 #clear:active {background:-webkit-linear-gradient(#ccc, #fff)}
