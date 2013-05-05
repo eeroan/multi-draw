@@ -1,8 +1,8 @@
 var colors = $.map([
-  '000000',
   'a52020',
   'd269ee',
   '6495ed',
+  '000000',
   '00008b',
   '006400',
   'ff8c00',
@@ -13,12 +13,13 @@ var colors = $.map([
 
 var width = 768
 var height = 1024
-var penStyle = {strokeStyle:"rgba(100, 100, 200, 1.0)", lineWidth:5, lineCap:"round"}
-var win = $(window)
-win.bind('orientationchange', preventDefault)
+var penStyle = {strokeStyle: "rgba(100, 100, 200, 1.0)", lineWidth: 5, lineCap: "round"}
+var $window = $(window)
+$window.bind('orientationchange', preventDefault)
 
-var canvas = $('#canvas')
-var gameField = $.extend(canvas.get(0).getContext("2d"), penStyle)
+var $canvas = $('#canvas')
+var canvasNode = $('#canvas').get(0)
+var drawingArea = $.extend(canvasNode.getContext("2d"), penStyle)
 
 var index = 0
 var clearButton = $('#clear')
@@ -26,15 +27,15 @@ clearButton.onAsObservable('touchmove').subscribe(preventDefault)
 var clearClick = clearButton
   .onAsObservable('click touchstart mousedown')
   .doAction(preventDefault)
-var shake = win.onAsObservable('shake')
-clearClick.subscribe(reload)
-shake.subscribe(reload)
+var shake = $window.onAsObservable('shake')
+clearClick.subscribe(repaint)
+shake.subscribe(repaint)
 
 initBrowserVersion()
 initTouchVersion()
 
 function initTouchVersion() {
-  var touchStart = canvas.onAsObservable('touchstart')
+  var touchStart = $canvas.onAsObservable('touchstart')
   var touchMove = $(document).onAsObservable('touchmove')
   var touchEnd = $(document).onAsObservable('touchend')
   var path = touchStart
@@ -43,7 +44,7 @@ function initTouchVersion() {
     .selectMany(function (movedTouch) {
       var currentPos = coordinates(movedTouch)
       var colorIndex = index++
-      drawPath([currentPos, {pageX:currentPos.pageX + 1, pageY:currentPos.pageY + 1}, colorModulo(colorIndex)])
+      drawPath([currentPos, {pageX: currentPos.pageX + 1, pageY: currentPos.pageY + 1}, colorModulo(colorIndex)])
       return touchMove
         .doAction(preventDefault)
         .select(function (e) {return e.originalEvent.touches})
@@ -61,9 +62,9 @@ function initTouchVersion() {
 }
 
 function initBrowserVersion() {
-  var mouseDown = canvas.onAsObservable('mousedown')
-  var mouseMove = canvas.onAsObservable('mousemove')
-  var mouseUp = canvas.onAsObservable('mouseup')
+  var mouseDown = $canvas.onAsObservable('mousedown')
+  var mouseMove = $canvas.onAsObservable('mousemove')
+  var mouseUp = $canvas.onAsObservable('mouseup')
   var mouseDraw = mouseDown.selectMany(function (e) {
     var colorIndex = index++
     var currentPos = coordinates(e)
@@ -84,7 +85,7 @@ function colorModulo(colorIndex) { return colors[colorIndex % colors.length] }
 
 function hasChanged(line) {return line[0].pageX != line[1].pageX || line[0].pageY != line[1].pageY}
 
-function coordinates(e) { return {pageX:e.pageX, pageY:e.pageY, timeStamp:new Date().getTime() } }
+function coordinates(e) { return {pageX: e.pageX, pageY: e.pageY, timeStamp: new Date().getTime() } }
 
 function movedTouches(e) {return e.originalEvent.changedTouches}
 
@@ -100,16 +101,24 @@ function drawPath(lineAndColor) {
   var equation = time / length * 5 + 2
   if(equation > 20) equation = 20
   var opacity = 1
-  gameField.lineWidth = equation
-  gameField.strokeStyle = hex2rgb(color, opacity)
-  gameField.beginPath()
-  gameField.moveTo(lineAndColor[0].pageX, lineAndColor[0].pageY)
-  gameField.lineTo(lineAndColor[1].pageX, lineAndColor[1].pageY)
-  gameField.stroke()
-  gameField.closePath()
+  with(drawingArea) {
+    lineWidth = equation
+    strokeStyle = hex2rgb(color, opacity)
+    beginPath()
+    moveTo(lineAndColor[0].pageX, lineAndColor[0].pageY)
+    lineTo(lineAndColor[1].pageX, lineAndColor[1].pageY)
+    stroke()
+    closePath()
+  }
 }
 
 function reload() { document.location = document.location.href }
+function repaint() {
+  drawingArea.save()
+  drawingArea.setTransform(1, 0, 0, 1, 0, 0)
+  drawingArea.clearRect(0, 0, canvasNode.width, canvasNode.height)
+  drawingArea.restore()
+}
 
 function hex2rgb(hex, opacity) {
   var rgb = hex.replace('#', '').match(/(.{2})/g)
