@@ -30,7 +30,15 @@ var clearClick = clearButton
 var shake = $window.onAsObservable('shake')
 clearClick.subscribe(repaint)
 shake.subscribe(repaint)
-
+$('body').append(palette(colors))
+var changeColor = $('#palette').onAsObservable('click', '.color').select(function (e) {return $(e.currentTarget)})
+var selectedColor = null
+changeColor.subscribe(function (obj) {
+  obj.siblings().removeClass('selected')
+  obj.addClass('selected')
+  var color = obj.data('color')
+  selectedColor = color == '#ffffff' ? null : color
+})
 initBrowserVersion()
 initTouchVersion()
 
@@ -102,7 +110,7 @@ function drawPath(lineAndColor) {
   var opacity = 1
   with(drawingArea) {
     lineWidth = equation
-    strokeStyle = hex2rgb(color, opacity)
+    strokeStyle = hex2rgb(selectedColor || color, opacity)
     beginPath()
     moveTo(lineAndColor[0].pageX, lineAndColor[0].pageY)
     lineTo(lineAndColor[1].pageX, lineAndColor[1].pageY)
@@ -120,6 +128,14 @@ function repaint() {
     clearRect(0, 0, canvasNode.width, canvasNode.height)
     restore()
   }
+}
+
+function palette(colors) {
+  var $palette = $('<div id="palette">')
+  return $palette.append(button('#ffffff').text('?').addClass('selected'))
+    .append.apply($palette, $.map(colors, button))
+
+  function button(color) { return $('<button class="color" data-color="' + color + '" style="background:' + color + '"></button>') }
 }
 
 function hex2rgb(hex, opacity) {
