@@ -39,6 +39,21 @@ changeColor.subscribe(function (obj) {
   var color = obj.data('color')
   selectedColor = color == '#ffffff' ? null : color
 })
+
+var brushSizeChange = $('#brushSize').onAsObservable('change').select(function (e) {return e.currentTarget.value})
+var currentBrushSize
+brushSizeChange.subscribe(updateCurrentBrushSize)
+updateCurrentBrushSize(10)
+function updateCurrentBrushSize(size) {
+  currentBrushSize = +size
+  var radius = currentBrushSize + 10
+  $('#brushSample').css({
+    width: radius,
+    height: radius,
+    marginBottom: -radius / 2 + 10,
+    marginLeft: -radius / 2 + 10
+  })
+}
 initBrowserVersion()
 initTouchVersion()
 
@@ -105,11 +120,13 @@ function drawPath(lineAndColor) {
   var color = lineAndColor[2]
   var time = lineAndColor[1].timeStamp - lineAndColor[0].timeStamp
   var length = Math.sqrt(deltaX * deltaX + deltaY * deltaY)
-  var equation = time / length * 5 + 2
+  var equation = +(time / length * 5 + 2) || 20
   if(equation > 20) equation = 20
   var opacity = 1
   with(drawingArea) {
-    lineWidth = equation
+//    lineWidth = parseInt(equation + currentBrushSize - 5,10) || 20
+    lineWidth = equation + currentBrushSize - 10
+
     strokeStyle = hex2rgb(selectedColor || color, opacity)
     beginPath()
     moveTo(lineAndColor[0].pageX, lineAndColor[0].pageY)
