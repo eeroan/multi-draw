@@ -18,7 +18,7 @@ var $window = $(window)
 $window.bind('orientationchange', preventDefault)
 
 var $canvas = $('#canvas')
-var canvasNode = $('#canvas').get(0)
+var canvasNode = $canvas.get(0)
 var drawingArea = $.extend(canvasNode.getContext("2d"), penStyle)
 
 var index = 0
@@ -97,7 +97,6 @@ function drawPath(lineAndColor) {
   var color = lineAndColor[2]
   var time = lineAndColor[1].timeStamp - lineAndColor[0].timeStamp
   var length = Math.sqrt(deltaX * deltaX + deltaY * deltaY)
-  var speed = length / time
   var equation = time / length * 5 + 2
   if(equation > 20) equation = 20
   var opacity = 1
@@ -113,16 +112,18 @@ function drawPath(lineAndColor) {
 }
 
 function reload() { document.location = document.location.href }
+
 function repaint() {
-  drawingArea.save()
-  drawingArea.setTransform(1, 0, 0, 1, 0, 0)
-  drawingArea.clearRect(0, 0, canvasNode.width, canvasNode.height)
-  drawingArea.restore()
+  with(drawingArea) {
+    save()
+    setTransform(1, 0, 0, 1, 0, 0)
+    clearRect(0, 0, canvasNode.width, canvasNode.height)
+    restore()
+  }
 }
 
 function hex2rgb(hex, opacity) {
-  var rgb = hex.replace('#', '').match(/(.{2})/g)
-  var i = 3
-  while(i--) rgb[i] = parseInt(rgb[i], 16)
-  return typeof opacity == 'undefined' ? 'rgb(' + rgb.join(', ') + ')' : 'rgba(' + rgb.join(', ') + ', ' + opacity + ')'
+  var hexes = hex.replace('#', '').match(/(.{2})/g)
+  var rgb = $.map(hexes,function (x) {return parseInt(x, 16)}).join(', ')
+  return typeof opacity == 'undefined' || opacity === 1 ? 'rgb(' + rgb + ')' : 'rgba(' + rgb + ', ' + opacity + ')'
 }
