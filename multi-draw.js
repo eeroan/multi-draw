@@ -24,14 +24,17 @@ var drawingArea = $.extend(canvasNode.getContext("2d"), penStyle)
 var index = 0
 var clearButton = $('#clear')
 clearButton.onAsObservable('touchmove').subscribe(preventDefault)
+var startEvents = 'click touchstart mousedown'
 var clearClick = clearButton
-  .onAsObservable('click touchstart mousedown')
+  .onAsObservable(startEvents)
   .doAction(preventDefault)
 var shake = $window.onAsObservable('shake')
 clearClick.subscribe(repaint)
 shake.subscribe(repaint)
 $('body').append(palette(colors))
-var changeColor = $('#palette').onAsObservable('click', '.color').select(function (e) {return $(e.currentTarget)})
+var changeColor = $('#palette').onAsObservable(startEvents, '.color')
+  .doAction(preventDefault)
+  .select(function (e) {return $(e.currentTarget)})
 var selectedColor = null
 changeColor.subscribe(function (obj) {
   obj.siblings().removeClass('selected')
