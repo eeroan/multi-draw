@@ -131,12 +131,12 @@ function drawPath(lineAndColor) {
   var color = lineAndColor[2]
   var time = lineAndColor[1].timeStamp - lineAndColor[0].timeStamp
   var length = Math.sqrt(deltaX * deltaX + deltaY * deltaY)
-  var equation = +(time / length * 5 + 2) || 20
-  if(equation > 20) equation = 20
+  var equation = +(time / length * 5 + 2) + currentBrushSize - 10
+  if(equation > currentBrushSize) equation = currentBrushSize
   var opacity = 1
   with(drawingArea) {
 //    lineWidth = parseInt(equation + currentBrushSize - 5,10) || 20
-    lineWidth = equation + currentBrushSize - 10
+    lineWidth = equation
 
     strokeStyle = hex2rgb(selectedColor || color, opacity)
     beginPath()
