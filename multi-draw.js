@@ -77,6 +77,7 @@ function initTouchVersion() {
     .selectMany(function (movedTouch) {
       var currentPos = coordinates(movedTouch)
       var colorIndex = index++
+      setColor(colorIndex)
       drawPath([currentPos, {pageX: currentPos.pageX + 1, pageY: currentPos.pageY + 1}, colorModulo(colorIndex)])
       return touchMove
         .doAction(preventDefault)
@@ -94,6 +95,9 @@ function initTouchVersion() {
   path.subscribe(drawPath)
 }
 
+function setColor(colorIndex) {
+  drawingArea.strokeStyle = hex2rgb(selectedColor || colorModulo(colorIndex), 1)
+}
 function initBrowserVersion() {
   var mouseDown = $canvas.onAsObservable('mousedown')
   var mouseMove = $canvas.onAsObservable('mousemove')
@@ -101,6 +105,7 @@ function initBrowserVersion() {
   var mouseDraw = mouseDown.selectMany(function (e) {
     var colorIndex = index++
     var currentPos = coordinates(e)
+    setColor(colorIndex)
     drawPath([coordinates(e), coordinates(e), colorModulo(colorIndex)])
     return mouseMove
       .doAction(preventDefault)
@@ -138,7 +143,6 @@ function drawPath(lineAndColor) {
 //    lineWidth = parseInt(equation + currentBrushSize - 5,10) || 20
     lineWidth = equation
 
-    strokeStyle = hex2rgb(selectedColor || color, opacity)
     beginPath()
     moveTo(lineAndColor[0].pageX, lineAndColor[0].pageY)
     lineTo(lineAndColor[1].pageX, lineAndColor[1].pageY)
