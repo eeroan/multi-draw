@@ -1,14 +1,20 @@
 var colors = $.map([
   'a52020',
-  'd269ee',
-  '6495ed',
+  'ff00ff',
+  '00ffff',
+  'ffff00',
+  '0000ff',
+  'ff0000',
+  '00ff00',
   '000000',
+  'eeeeee',
   '00008b',
   '006400',
   'ff8c00',
   '9932cc',
   '808080',
-  '2e8b57'
+  '2e8b57',
+  'ccccff'
 ], function (colorInHex) {return '#' + colorInHex})
 
 var width = 768
@@ -22,6 +28,7 @@ var canvasNode = $canvas.get(0)
 var drawingArea = $.extend(canvasNode.getContext("2d"), penStyle)
 
 var index = 0
+var containsDrawing = false
 var clearButton = $('#clear')
 clearButton.onAsObservable('touchmove').subscribe(preventDefault)
 var startEvents = 'click touchstart mousedown'
@@ -118,6 +125,7 @@ function movedTouches(e) {return e.originalEvent.changedTouches}
 function preventDefault(e) { e.preventDefault() }
 
 function drawPath(lineAndColor) {
+  containsDrawing = true
   var deltaX = lineAndColor[1].pageX - lineAndColor[0].pageX
   var deltaY = lineAndColor[1].pageY - lineAndColor[0].pageY
   var color = lineAndColor[2]
@@ -142,12 +150,21 @@ function drawPath(lineAndColor) {
 function reload() { document.location = document.location.href }
 
 function repaint() {
-  with(drawingArea) {
-    save()
-    setTransform(1, 0, 0, 1, 0, 0)
-    clearRect(0, 0, canvasNode.width, canvasNode.height)
-    restore()
+  if(containsDrawing) {
+    saveImage()
+    with(drawingArea) {
+      save()
+      setTransform(1, 0, 0, 1, 0, 0)
+      clearRect(0, 0, canvasNode.width, canvasNode.height)
+      restore()
+    }
+    containsDrawing = false
   }
+}
+
+function saveImage() {
+  var img = '<img src="' + canvasNode.toDataURL() + '"/>'
+  $('#history').append(img)
 }
 
 function palette(colors) {

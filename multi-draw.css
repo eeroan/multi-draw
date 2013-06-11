@@ -10,3 +10,5 @@ body { position: relative; margin: 0; }
 #brush { position: absolute; bottom: 5px; left: 100px; }
 #brush #brushSample { background: #fff; border:1px solid #000; border-radius: 1000px; display: inline-block; }
 #brush #brushSize { display: inline-block; margin: 20px; }
+#history { position: absolute; bottom: 5px; left: 320px; width:440px; height: 100px; white-space: nowrap;overflow-x: auto;}
+#history img { height: 80px; margin: 0 5px; background: #fff;}
