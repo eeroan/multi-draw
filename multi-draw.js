@@ -58,10 +58,10 @@ function updateCurrentBrushSize(size) {
   currentBrushSize = +size
   var radius = currentBrushSize + 10
   $('#brushSample').css({
-    width: radius,
-    height: radius,
+    width       : radius,
+    height      : radius,
     marginBottom: -radius / 2 + 10,
-    marginLeft: -radius / 2 + 10
+    marginLeft  : -radius / 2 + 10
   })
 }
 initBrowserVersion()
@@ -168,9 +168,18 @@ function repaint() {
 
 function saveImage() {
   var dataURL = canvasNode.toDataURL()
+  var key = 'savedMultiDrawImages'
+  var savedMultiDrawImages = JSON.parse(localStorage.getItem(key)) || []
+  var id = uniqueId()
+  localStorage.setItem(id, dataURL)
+  savedMultiDrawImages.push(id)
+  localStorage.setItem(key, JSON.stringify(savedMultiDrawImages))
   var img = '<a href="' + dataURL + '" target="_blank"><img src="' + dataURL + '"/></a>'
   $('#history').append(img)
+
 }
+
+function uniqueId() { return 'img-' + String(parseInt((new Date).getTime() / 1000, 10) - 1370980000) }
 
 function palette(colors) {
   var $palette = $('<div id="palette">')
