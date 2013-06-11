@@ -167,7 +167,8 @@ function repaint() {
 }
 
 function saveImage() {
-  var img = '<img src="' + canvasNode.toDataURL() + '"/>'
+  var dataURL = canvasNode.toDataURL()
+  var img = '<a href="' + dataURL + '" target="_blank"><img src="' + dataURL + '"/></a>'
   $('#history').append(img)
 }
 
