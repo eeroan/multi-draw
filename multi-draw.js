@@ -58,14 +58,15 @@ function updateCurrentBrushSize(size) {
   currentBrushSize = +size
   var radius = currentBrushSize + 10
   $('#brushSample').css({
-    width       : radius,
-    height      : radius,
+    width: radius,
+    height: radius,
     marginBottom: -radius / 2 + 10,
-    marginLeft  : -radius / 2 + 10
+    marginLeft: -radius / 2 + 10
   })
 }
 initBrowserVersion()
 initTouchVersion()
+restoreThumbnails()
 
 function initTouchVersion() {
   var touchStart = $canvas.onAsObservable('touchstart')
@@ -183,9 +184,15 @@ function saveImage() {
   }
   savedMultiDrawImages.push(id)
   localStorage.setItem(key, JSON.stringify(savedMultiDrawImages))
-  var img = '<a href="' + dataURL + '" target="_blank"><img src="' + dataURL + '"/></a>'
-  $('#history').append(img)
+  $('#history').append(thumb(dataURL))
+}
 
+function thumb(dataURL) { return '<a href="' + dataURL + '" target="_blank"><img src="' + dataURL + '"/></a>'}
+
+function restoreThumbnails() {
+  var key = 'savedMultiDrawImages'
+  var savedMultiDrawImages = JSON.parse(localStorage.getItem(key)) || []
+  $('#history').html($.map(savedMultiDrawImages,function (id) { return thumb(localStorage.getItem(id)) }).join(''))
 }
 
 function uniqueId() { return 'img-' + String(parseInt((new Date).getTime() / 1000, 10) - 1370980000) }
