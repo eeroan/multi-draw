@@ -67,6 +67,7 @@ function updateCurrentBrushSize(size) {
 initBrowserVersion()
 initTouchVersion()
 restoreThumbnails()
+$('.gallery').click(function () { document.location = $(this).attr('href')})
 
 function initTouchVersion() {
   var touchStart = $canvas.onAsObservable('touchstart')
@@ -84,7 +85,7 @@ function initTouchVersion() {
         .doAction(preventDefault)
         .select(function (e) {return e.originalEvent.touches})
         .select(function (touches) { return  findByIdentifier(touches, true)[0] || null })
-        .where(function(touch) { return touch !== null } )
+        .where(function (touch) { return touch !== null })
         .takeUntil(touchEnd.select(movedTouches).where(function (touches) { return findByIdentifier(touches).length > 0 }))
         .select(function (e) {
           var previousPos = $.extend({}, currentPos)
@@ -179,6 +180,7 @@ function saveImage() {
     } catch(e) {
       var first = savedMultiDrawImages.shift()
       localStorage.removeItem(first)
+      $('#history img:first').remove()
     }
   }
   savedMultiDrawImages.push(id)
@@ -186,19 +188,20 @@ function saveImage() {
   $('#history').append(thumb(dataURL))
 }
 
-function thumb(dataURL) { return '<a href="' + dataURL + '" target="_blank"><img src="' + dataURL + '"/></a>'}
+function thumb(dataURL) { return '<a href="' + dataURL + '" ><img src="' + dataURL + '"/></a>'}
 
 function restoreThumbnails() {
   var key = 'savedMultiDrawImages'
   var savedMultiDrawImages = JSON.parse(localStorage.getItem(key)) || []
   $('#history').html($.map(savedMultiDrawImages,function (id) { return thumb(localStorage.getItem(id)) }).join(''))
+  //.on('click', 'a', function() {document.location = $(this).attr('href')})
 }
 
 function uniqueId() { return 'img-' + String(parseInt((new Date).getTime() / 1000, 10) - 1370980000) }
 
 function palette(colors) {
   var $palette = $('<div id="palette">')
-  return $palette.append(button('#ffffff').text('?').addClass('selected'))
+  return $palette.append(button('#ffffff').text('b').addClass('selected'))
     .append.apply($palette, $.map(colors, button))
 
   function button(color) { return $('<button class="color" data-color="' + color + '" style="background:' + color + '"></button>') }

@@ -12,3 +12,4 @@ body { position: relative; margin: 0; }
 #brush #brushSize { display: inline-block; margin: 20px; }
 #history { position: absolute; bottom: 5px; left: 320px; width:440px; height: 100px; white-space: nowrap;overflow-x: auto;}
 #history img { height: 80px; margin: 0 5px; background: #fff;}
+.gallery { position: absolute; top:20px;left:0;text-decoration: none; color: #666;}
