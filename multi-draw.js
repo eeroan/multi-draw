@@ -171,7 +171,16 @@ function saveImage() {
   var key = 'savedMultiDrawImages'
   var savedMultiDrawImages = JSON.parse(localStorage.getItem(key)) || []
   var id = uniqueId()
-  localStorage.setItem(id, dataURL)
+  var success = false
+  while(!success) {
+    try {
+      localStorage.setItem(id, dataURL)
+      success = true
+    } catch(e) {
+      var first = savedMultiDrawImages.shift()
+      localStorage.removeItem(first)
+    }
+  }
   savedMultiDrawImages.push(id)
   localStorage.setItem(key, JSON.stringify(savedMultiDrawImages))
   var img = '<a href="' + dataURL + '" target="_blank"><img src="' + dataURL + '"/></a>'
