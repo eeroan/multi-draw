@@ -83,7 +83,8 @@ function initTouchVersion() {
       return touchMove
         .doAction(preventDefault)
         .select(function (e) {return e.originalEvent.touches})
-        .select(function (touches) { return  findByIdentifier(touches, true)[0] || reload() })
+        .select(function (touches) { return  findByIdentifier(touches, true)[0] || null })
+        .where(function(touch) { return touch !== null } )
         .takeUntil(touchEnd.select(movedTouches).where(function (touches) { return findByIdentifier(touches).length > 0 }))
         .select(function (e) {
           var previousPos = $.extend({}, currentPos)
@@ -151,8 +152,6 @@ function drawPath(lineAndColor) {
     closePath()
   }
 }
-
-function reload() { document.location = document.location.href }
 
 function repaint() {
   if(containsDrawing) {
