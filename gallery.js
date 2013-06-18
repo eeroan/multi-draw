@@ -2,12 +2,14 @@ var key = 'savedMultiDrawImages'
 var savedMultiDrawImages = JSON.parse(localStorage.getItem(key)) || []
 $('#gallery').html($.map(savedMultiDrawImages,function (id) {
   var dataURL = localStorage.getItem(id)
-  return '<div class="image"><a class="imageLink" href="' + dataURL + '" target="_blank"><img src="' + dataURL + '"/></a>' +
-    '<a class="remove" href="#' + id + '">X</a>' +
-    '<a class="save" href="#' + id + '">save</a>' +
+  return '<div class="image"><a class="imageLink" href="' + dataURL + '"><img src="' + dataURL + '"/></a>' +
+    idLink('remove', 'X') +
+    idLink('save', 'save') +
     '</div>'
+  function idLink(className, label) { return '<a class="' + className + '" href="#' + id + '">' + label + '</a>' }
 }).join(''))
-$('.save').click(function () {
+$('.save').click(function (e) {
+  e.preventDefault()
   var id = hash(this)
   var dataUrl = localStorage.getItem(id)
   dataUrl = dataUrl.substring(dataUrl.indexOf(',') + 1)
@@ -18,7 +20,12 @@ $('.save').click(function () {
       img     : dataUrl,
       password: password,
       id      : id
-    })//.fail(function () { post(promptPwd()) })
+    })
+      .done(function() {console.log('done',this, arguments)})
+      .fail(function () {
+        console.log('fail',this, arguments)
+        //post(promptPwd())
+      })
   }
 
   function promptPwd() {
@@ -28,7 +35,8 @@ $('.save').click(function () {
   }
 })
 
-$('.remove').click(function () {
+$('.remove').click(function (e) {
+  e.preventDefault()
   var id = hash(this)
   localStorage.removeItem(id)
   savedMultiDrawImages.splice(savedMultiDrawImages.indexOf(id), 1)

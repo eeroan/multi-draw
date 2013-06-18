@@ -25,7 +25,7 @@ $window.bind('orientationchange', preventDefault)
 
 var $canvas = $('#canvas')
 var canvasNode = $canvas.get(0)
-var drawingArea = $.extend(canvasNode.getContext("2d"), penStyle)
+var drawingContext = $.extend(canvasNode.getContext("2d"), penStyle)
 
 var index = 0
 var containsDrawing = false
@@ -99,7 +99,7 @@ function initTouchVersion() {
 }
 
 function setColor(colorIndex) {
-  drawingArea.strokeStyle = hex2rgb(selectedColor || colorModulo(colorIndex), 1)
+  drawingContext.strokeStyle = hex2rgb(selectedColor || colorModulo(colorIndex), 1)
 }
 function initBrowserVersion() {
   var mouseDown = $canvas.onAsObservable('mousedown')
@@ -142,7 +142,7 @@ function drawPath(lineAndColor) {
   var equation = +(time / length * 5 + 2) + currentBrushSize - 10
   if(equation > currentBrushSize) equation = currentBrushSize
   var opacity = 1
-  with(drawingArea) {
+  with(drawingContext) {
 //    lineWidth = parseInt(equation + currentBrushSize - 5,10) || 20
     lineWidth = equation
 
@@ -157,7 +157,7 @@ function drawPath(lineAndColor) {
 function repaint() {
   if(containsDrawing) {
     saveImage()
-    with(drawingArea) {
+    with(drawingContext) {
       save()
       setTransform(1, 0, 0, 1, 0, 0)
       clearRect(0, 0, canvasNode.width, canvasNode.height)
