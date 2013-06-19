@@ -200,7 +200,7 @@ function uniqueId() { return 'img-' + String(parseInt((new Date).getTime() / 100
 
 function palette(colors) {
   var $palette = $('<div id="palette">')
-  return $palette.append(button('#ffffff').text('b').addClass('selected'))
+  return $palette.append(button('#ffffff').text('?').addClass('selected'))
     .append.apply($palette, $.map(colors, button))
 
   function button(color) { return $('<button class="color" data-color="' + color + '" style="background:' + color + '"></button>') }
