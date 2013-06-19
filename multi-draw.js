@@ -242,11 +242,8 @@ function initGallery(e) {
         password: password,
         id      : id
       })
-        .done(function () {console.log('done', this, arguments)})
-        .fail(function () {
-          console.log('fail', this, arguments)
-          //post(promptPwd())
-        })
+        .done($.noop)
+        .fail($.noop)
     }
 
     function promptPwd() {
