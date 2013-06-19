@@ -237,7 +237,7 @@ function initGallery(e) {
     var password = localStorage.getItem('img-pwd')
     post(password || promptPwd())
     function post(password) {
-      return $.post("http://eea.kapsi.fi/dataUrl.php", {
+      return $.post("http://eea.kapsi.fi/draw/dataUrl.php", {
         img     : dataUrl,
         password: password,
         id      : id
