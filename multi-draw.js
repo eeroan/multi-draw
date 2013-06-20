@@ -58,10 +58,10 @@ function updateCurrentBrushSize(size) {
   currentBrushSize = +size
   var radius = currentBrushSize + 10
   $('#brushSample').css({
-    width: radius,
-    height: radius,
+    width       : radius,
+    height      : radius,
     marginBottom: -radius / 2 + 10,
-    marginLeft: -radius / 2 + 10
+    marginLeft  : -radius / 2 + 10
   })
 }
 initBrowserVersion()
@@ -232,6 +232,7 @@ function initGallery(e) {
   $('.save').click(function (e) {
     e.preventDefault()
     var id = hash(this)
+    var _this = this
     var dataUrl = localStorage.getItem(id)
     dataUrl = dataUrl.substring(dataUrl.indexOf(',') + 1)
     var password = localStorage.getItem('img-pwd')
@@ -242,8 +243,10 @@ function initGallery(e) {
         password: password,
         id      : id
       })
-        .done(function() {console.log('done',arguments)})
-        .fail(function() {console.log('fail',arguments)})
+        .done(function () {
+          remove.call(_this)
+        })
+        .fail(function (data, textStatus, jqXHR) {alert('Failure when saving: ' + jqXHR)})
     }
 
     function promptPwd() {
@@ -255,12 +258,16 @@ function initGallery(e) {
 
   $('.remove').click(function (e) {
     e.preventDefault()
+    remove.call(this)
+  })
+
+  function remove() {
     var id = hash(this)
     localStorage.removeItem(id)
     savedMultiDrawImages.splice(savedMultiDrawImages.indexOf(id), 1)
     localStorage.setItem(key, JSON.stringify(savedMultiDrawImages))
     $(this).parents('.image').remove()
-  })
+  }
 
   function hash(elem) {return $(elem).attr('href').substring(1) }
 }
