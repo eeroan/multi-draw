@@ -1,5 +1,6 @@
 <?php
 $code = 200;
+$contentType = 'Content-Type: application/json; charset=utf-8';
 try {
     $img = $_POST["img"];
     $pwd = $_POST["password"];
@@ -12,14 +13,12 @@ try {
     $fh = fopen($myFile, 'w');
     fwrite($fh, $image);
     fclose($fh);
-    header('Content-Type: application/json; charset=utf-8');
-    http_response_code($code);
+    header($contentType, true, $code);
     $arr = array('message' => $code);
     echo json_encode($arr);
 } catch(Exception $e) {
     $error = array('message' => $e->getMessage(), 'trace' => $e->getTraceAsString());
-    header('Content-Type: application/json; charset=utf-8');
-    http_response_code(500);
+    header($contentType, true, 500);
     echo json_encode($arr);
 }
 ?>
