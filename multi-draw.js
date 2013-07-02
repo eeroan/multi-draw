@@ -49,24 +49,46 @@ changeColor.subscribe(function (obj) {
   var color = obj.data('color')
   selectedColor = color == '#ffffff' ? null : color
 })
-
-var brushSizeChange = $('#brushSize').onAsObservable('change').select(function (e) {return e.currentTarget.value})
+var defaultSize = 10
+generateBrushes()
 var currentBrushSize
-brushSizeChange.subscribe(updateCurrentBrushSize)
-updateCurrentBrushSize(10)
+updateCurrentBrushSize(defaultSize)
+
 function updateCurrentBrushSize(size) {
   currentBrushSize = +size
-  var radius = currentBrushSize + 10
-  $('#brushSample').css({
+}
+
+function setBrushSize(elem, size) {
+  var radius = +size + 10
+  elem.css({
     width       : radius,
     height      : radius,
-    marginBottom: -radius / 2 + 10,
-    marginLeft  : -radius / 2 + 10
+    marginBottom: -radius / 2 + 10
   })
 }
 initBrowserVersion()
 initTouchVersion()
 $('#galleryLink').click(initGallery)
+
+function generateBrushes() {
+  var $brush = $('#brush')
+  var map = $.map([1, 10, 20, 30, 40], brush)
+
+  function brush(value) {
+    var $div = $('<div>')
+    setBrushSize($div, value)
+
+    return $div.addClass('brushSample').toggleClass('selected', value === defaultSize).data('value', value)
+  }
+
+  $.fn.append.apply($brush, map)
+  var brushSizeChangeElem = $brush.onAsObservable(startEvents, '.brushSample').select(function (e) {return $(e.currentTarget)})
+  brushSizeChangeElem.subscribe(function (elem) {
+    elem.siblings().removeClass('selected')
+    elem.addClass('selected')
+  })
+  brushSizeChangeElem.select(function (elem) { return elem.data('value')}).subscribe(updateCurrentBrushSize)
+}
 
 function initTouchVersion() {
   var touchStart = $canvas.onAsObservable('touchstart')

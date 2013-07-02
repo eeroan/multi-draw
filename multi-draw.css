@@ -1,3 +1,10 @@
+* {
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
 body { position: relative; margin: 0; }
 #canvas { border: 1px solid #000; position: relative; margin: 0; background: -webkit-radial-gradient(center, circle cover, white 0%, white 70%, #efefef 90%, #ccc 100%); }
 .player { position: absolute; top: 0; left: 0; z-index: 99; width: 25px; height: 25px; background: red; border-radius: 15px; -moz-border-radius: 15px; border: 1px solid #F88; }
@@ -7,9 +14,9 @@ body { position: relative; margin: 0; }
 #palette { position: absolute; left: 0; top: 100px; }
 #palette .color { display: block; margin: 10px; width: 40px; height: 40px; border: 1px solid #000; font-size: 30px; }
 #palette .color.selected { border: 1px solid #fff; box-shadow: 0 0 0 8px #000; }
-#brush { position: absolute; bottom: 5px; left: 100px; }
-#brush #brushSample { background: #fff; border:1px solid #000; border-radius: 1000px; display: inline-block; }
-#brush #brushSize { display: inline-block; margin: 20px; }
+#brush { position: absolute; bottom: 25px; left: 100px; }
+#brush .brushSample { background: #fff; border:1px solid #000; border-radius: 1000px; display: inline-block; margin-left: 10px;}
+#brush .brushSample.selected { background: #000; }
 #history { position: absolute; bottom: 5px; left: 320px; width:440px; height: 100px; white-space: nowrap;overflow-x: auto;}
 #history img { height: 80px; margin: 0 5px; background: #fff;}
 #galleryLink { display: block; position: absolute; bottom: 4px; left: 700px; font-weight: bold; text-decoration: none; color:#666; }
