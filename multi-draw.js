@@ -1,4 +1,4 @@
-var colors = $.map([
+var colors = [
   'a52020',
   'ff00ff',
   '00ffff',
@@ -15,7 +15,7 @@ var colors = $.map([
   '808080',
   '2e8b57',
   'ccccff'
-], function (colorInHex) {return '#' + colorInHex})
+].map(function (colorInHex) {return '#' + colorInHex})
 
 var width = 768
 var height = 1024
@@ -73,7 +73,7 @@ $('#galleryLink').click(initGallery)
 
 function generateBrushes() {
   var $brush = $('#brush')
-  var map = $.map([1, 10, 20, 30, 40], brush)
+  var map = [1, 10, 20, 30, 40].map(brush)
 
   function brush(value) {
     var $div = $('<div>')
@@ -226,14 +226,14 @@ function uniqueId() { return 'img-' + String(parseInt((new Date).getTime() / 100
 function palette(colors) {
   var $palette = $('<div id="palette">')
   return $palette.append(button('#ffffff').text('?').addClass('selected'))
-    .append.apply($palette, $.map(colors, button))
+    .append.apply($palette, colors.map(button))
 
   function button(color) { return $('<button class="color" data-color="' + color + '" style="background:' + color + '"></button>') }
 }
 
 function hex2rgb(hex, opacity) {
   var hexes = hex.replace('#', '').match(/(.{2})/g)
-  var rgb = $.map(hexes,function (x) {return parseInt(x, 16)}).join(', ')
+  var rgb = hexes.map(function (x) {return parseInt(x, 16)}).join(', ')
   return typeof opacity == 'undefined' || opacity === 1 ? 'rgb(' + rgb + ')' : 'rgba(' + rgb + ', ' + opacity + ')'
 }
 
@@ -242,7 +242,7 @@ function initGallery(e) {
   e.preventDefault()
   var key = 'savedMultiDrawImages'
   var savedMultiDrawImages = JSON.parse(localStorage.getItem(key)) || []
-  gallery.slideDown().html('<a href="#" class="close">Close</a>' + $.map(savedMultiDrawImages,function (id) {
+  gallery.slideDown().html('<a href="#" class="close">Close</a>' + savedMultiDrawImages.map(function (id) {
     var dataURL = localStorage.getItem(id)
     return '<div class="image"><a class="imageLink" href="' + dataURL + '"><img src="' + dataURL + '"/></a>' +
       idLink('remove', 'X') +
