@@ -202,12 +202,12 @@ function saveImage() {
     } catch(e) {
       var first = savedMultiDrawImages.shift()
       localStorage.removeItem(first)
-      $('#history img:first').remove()
+      $('#history img:last').remove()
     }
   }
   savedMultiDrawImages.push(id)
   localStorage.setItem(key, JSON.stringify(savedMultiDrawImages))
-  $('#history').append(thumb(dataURL))
+  $('#history').prepend(thumb(dataURL))
 }
 
 function thumb(dataURL) { return '<a href="' + dataURL + '" ><img src="' + dataURL + '"/></a>'}
@@ -215,7 +215,7 @@ function thumb(dataURL) { return '<a href="' + dataURL + '" ><img src="' + dataU
 function restoreThumbnails() {
   var key = 'savedMultiDrawImages'
   var savedMultiDrawImages = JSON.parse(localStorage.getItem(key)) || []
-  $('#history').html($.map(savedMultiDrawImages,function (id) { return thumb(localStorage.getItem(id)) }).join(''))
+  $('#history').html(savedMultiDrawImages.map(function (id) { return thumb(localStorage.getItem(id)) }).reverse().join(''))
   //.on('click', 'a', function() {document.location = $(this).attr('href')})
 }
 
