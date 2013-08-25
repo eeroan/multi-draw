@@ -21,7 +21,7 @@ body { position: relative; margin: 0; }
 #history img { height: 80px; margin: 0 5px; background: #fff;}
 #galleryLink { display: block; position: absolute; bottom: 4px; left: 700px; font-weight: bold; text-decoration: none; color:#666; }
 
-#gallery { display: none; position: absolute;  background: #666; width:768px; height:1024px; top: 0;left:0; z-index: 1;}
+#gallery { display: none; position: absolute; overflow-y:auto; background: #666; width:768px; height:1024px; top: 0;left:0; z-index: 1;}
 #gallery a { display: block; text-align: center; text-decoration: none; font-family: Arial; color: #777; font-weight: bold; font-size: 15px; }
 #gallery a:hover { color: #ddd; }
 #gallery .close { display: block; margin: 10px; text-decoration: none;}

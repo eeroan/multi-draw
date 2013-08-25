@@ -242,7 +242,7 @@ function initGallery(e) {
   e.preventDefault()
   var key = 'savedMultiDrawImages'
   var savedMultiDrawImages = JSON.parse(localStorage.getItem(key)) || []
-  gallery.slideDown().html('<a href="#" class="close">Close</a>' + savedMultiDrawImages.map(function (id) {
+  gallery.show().html('<a href="#" class="close">Close</a>' + savedMultiDrawImages.map(function (id) {
     var dataURL = localStorage.getItem(id)
     return '<div class="image"><a class="imageLink" href="' + dataURL + '"><img src="' + dataURL + '"/></a>' +
       idLink('remove', 'X') +
