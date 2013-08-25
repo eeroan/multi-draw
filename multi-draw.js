@@ -83,7 +83,9 @@ function generateBrushes() {
   }
 
   $.fn.append.apply($brush, map)
-  var brushSizeChangeElem = $brush.onAsObservable(startEvents, '.brushSample').select(function (e) {return $(e.currentTarget)})
+  var brushSizeChangeElem = $brush.onAsObservable(startEvents, '.brushSample')
+    .doAction(preventDefault)
+    .select(function (e) {return $(e.currentTarget)})
   brushSizeChangeElem.subscribe(function (elem) {
     elem.siblings().removeClass('selected')
     elem.addClass('selected')
