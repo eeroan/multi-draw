@@ -68,6 +68,7 @@ function setBrushSize(elem, size) {
 }
 initBrowserVersion()
 initTouchVersion()
+restoreThumbnails()
 $('#galleryLink').click(initGallery)
 
 function generateBrushes() {
