@@ -15,17 +15,18 @@ body { position: relative; margin: 0; }
 #palette .color { display: block; margin: 10px; width: 40px; height: 40px; border: 1px solid #000; font-size: 30px; }
 #palette .color.selected { border: 1px solid #fff; box-shadow: 0 0 0 8px #000; }
 #brush { position: absolute; bottom: 25px; left: 100px; }
-#brush .brushSample { background: #fff; border:1px solid #000; border-radius: 1000px; display: inline-block; margin-left: 10px;}
+#brush .brushSample { background: #fff; border: 1px solid #000; border-radius: 1000px; display: inline-block; margin-left: 10px; }
 #brush .brushSample.selected { background: #000; }
-#history { position: absolute; bottom: 5px; left: 320px; width:440px; height: 100px; white-space: nowrap;overflow-x: auto;}
-#history img { height: 80px; margin: 0 5px; background: #fff;}
-#galleryLink { display: block; position: absolute; bottom: 4px; left: 700px; font-weight: bold; text-decoration: none; color:#666; }
+#history { position: absolute; bottom: 5px; left: 320px; width: 440px; height: 100px; white-space: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+#history img { height: 80px; margin: 0 5px; background: #fff; }
+#galleryLink { display: block; position: absolute; bottom: 4px; left: 700px; font-weight: bold; text-decoration: none; color: #666; }
 
-#gallery { display: none; position: absolute; overflow-y:auto; background: #666; width:768px; height:1024px; top: 0;left:0; z-index: 1;}
+#gallery { display: none; position: absolute; overflow-y: auto; -webkit-overflow-scrolling: touch; background: #666; width: 768px; height: 1024px; top: 0; left: 0; z-index: 1; }
 #gallery a { display: block; text-align: center; text-decoration: none; font-family: Arial; color: #777; font-weight: bold; font-size: 15px; }
 #gallery a:hover { color: #ddd; }
-#gallery .close { display: block; margin: 10px; text-decoration: none;}
-#gallery .image { height: 250px; display: inline-block; }
+#gallery .close { display: block; margin: 10px; text-decoration: none; }
+#gallery .image { display: inline-block; }
+#gallery .image.selected { background: #000; }
 #gallery img { height: 200px; background: #fff; margin: 10px; box-shadow: 3px 3px 7px 3px rgba(0, 0, 0, 0.3) }
 #gallery .imageLink,
 #gallery.remove { display: block; }

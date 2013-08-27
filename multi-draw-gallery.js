@@ -43,34 +43,32 @@ var gallery = (function () {
     e.preventDefault()
     var key = 'savedMultiDrawImages'
     var savedMultiDrawImages = JSON.parse(localStorage.getItem(key)) || []
-    gallery.show().html('<a href="#" class="close">Close</a>' + savedMultiDrawImages.map(function (id) {
+    gallery.show().html('<aside><a href="#" class="close">Close</a><button id="save">Save selected</button><button id="remove">Remove selected</button></aside>' +
+      savedMultiDrawImages.map(function (id) {
       var dataURL = localStorage.getItem(id)
-      return '<div class="image"><a class="imageLink" href="' + dataURL + '"><img src="' + dataURL + '"/></a>' +
-        idLink('remove', 'X') +
-        idLink('save', 'save') +
-        '</div>'
-      function idLink(className, label) { return '<a class="' + className + '" href="#' + id + '">' + label + '</a>' }
+      return '<div class="image" id="' + id + '"><img src="' + dataURL + '"/>' + '</div>'
     }).join(''))
     $('.close').click(function (e) {
       e.preventDefault()
       gallery.slideUp()
     })
-    $('.save').click(function (e) {
+    $('.image').click(function () {
+      $(this).toggleClass('selected')
+    })
+    $('#save').click(function (e) {
       e.preventDefault()
-      var id = hash(this)
-      var _this = this
-      var dataUrl = localStorage.getItem(id)
-      dataUrl = dataUrl.substring(dataUrl.indexOf(',') + 1)
-      var password = localStorage.getItem('img-pwd')
-      post(password || promptPwd())
-      function post(password) {
+      var password = localStorage.getItem('img-pwd') || promptPwd()
+      selectedIds().forEach(post)
+      function post(id) {
+        var dataUrl = localStorage.getItem(id)
+        dataUrl = dataUrl.substring(dataUrl.indexOf(',') + 1)
         return $.post("http://eea.kapsi.fi/draw/dataUrl.php", {
           img: dataUrl,
           password: password,
           id: id
         })
           .done(function () {
-            remove.call(_this)
+            remove(id)
           })
           .fail(function (data, textStatus, jqXHR) {alert('Failure when saving: ' + jqXHR)})
       }
@@ -82,19 +80,18 @@ var gallery = (function () {
       }
     })
 
-    $('.remove').click(function (e) {
+    $('#remove').click(function (e) {
       e.preventDefault()
-      remove.call(this)
+      selectedIds().forEach(remove)
     })
 
-    function remove() {
-      var id = hash(this)
+    function selectedIds() { return $('.image.selected', gallery).map(function() {return this.id}).toArray()}
+
+    function remove(id) {
       localStorage.removeItem(id)
       savedMultiDrawImages.splice(savedMultiDrawImages.indexOf(id), 1)
       localStorage.setItem(key, JSON.stringify(savedMultiDrawImages))
-      $(this).parents('.image').remove()
+      $('#'+id).remove()
     }
-
-    function hash(elem) {return $(elem).attr('href').substring(1) }
   }
 })()
