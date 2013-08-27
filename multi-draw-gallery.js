@@ -55,7 +55,7 @@ var gallery = (function () {
     $('.image').click(function () {
       $(this).toggleClass('selected')
     })
-    $('#save').click(function (e) {
+    $('#save').on('click touchstart', function (e) {
       e.preventDefault()
       var password = localStorage.getItem('img-pwd') || promptPwd()
       selectedIds().forEach(post)
@@ -80,7 +80,7 @@ var gallery = (function () {
       }
     })
 
-    $('#remove').click(function (e) {
+    $('#remove').on('click touchstart', function (e) {
       e.preventDefault()
       selectedIds().forEach(remove)
     })
