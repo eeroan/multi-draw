@@ -43,10 +43,13 @@ window.gallery = (function () {
     var key = 'savedMultiDrawImages'
     var savedMultiDrawImages = JSON.parse(localStorage.getItem(key)) || []
     gallery.show().html('<aside><a href="#" class="close">Close</a><button id="save">Save selected</button><button id="remove">Remove selected</button></aside>' +
-      savedMultiDrawImages.map(function (id) {
+      '<div class="local">' + savedMultiDrawImages.map(function (id) {
       var dataURL = localStorage.getItem(id)
       return '<div class="image" id="' + id + '"><img src="' + dataURL + '"/>' + '</div>'
-    }).join(''))
+    }).join('') + '</div><h2>Saved ones</h2><div class="server"></div> ')
+    $.getJSON('uploadDir.php', function (data) {
+      $('.server', gallery).append(data.map(function(img) {return '<div class="image"><img src="' + img + '"/></div> '}).join(''))
+    })
     $('.close').click(function (e) {
       e.preventDefault()
       gallery.slideUp()
@@ -84,13 +87,13 @@ window.gallery = (function () {
       selectedIds().forEach(remove)
     })
 
-    function selectedIds() { return $('.image.selected', gallery).map(function() {return this.id}).toArray()}
+    function selectedIds() { return $('.image.selected', gallery).map(function () {return this.id}).toArray()}
 
     function remove(id) {
       localStorage.removeItem(id)
       savedMultiDrawImages.splice(savedMultiDrawImages.indexOf(id), 1)
       localStorage.setItem(key, JSON.stringify(savedMultiDrawImages))
-      $('#'+id).remove()
+      $('#' + id).remove()
     }
   }
 })()
