@@ -22,9 +22,10 @@ body { position: relative; margin: 0; }
 #galleryLink { display: block; position: absolute; bottom: 4px; left: 700px; font-weight: bold; text-decoration: none; color: #666; }
 
 #gallery { display: none; position: absolute; overflow-y: auto; -webkit-overflow-scrolling: touch; background: #666; width: 768px; height: 1024px; top: 0; left: 0; z-index: 1; }
+#gallery aside { margin-top: 30px;}
 #gallery a { display: block; text-align: center; text-decoration: none; font-family: Arial; color: #777; font-weight: bold; font-size: 15px; }
 #gallery a:hover { color: #ddd; }
-#gallery .close { display: block; margin: 10px; text-decoration: none; }
+#gallery .close { display: inline; margin: 10px; color: #eee; }
 #gallery .image { display: inline-block; }
 #gallery .image.selected { background: #000; }
 #gallery img { height: 200px; background: #fff; margin: 10px; box-shadow: 3px 3px 7px 3px rgba(0, 0, 0, 0.3) }
