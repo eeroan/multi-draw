@@ -1,5 +1,4 @@
-var gallery = (function () {
-
+window.gallery = (function () {
   return {
     init: initGallery,
     restoreThumbnails: restoreThumbnails,
