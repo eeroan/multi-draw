@@ -17,6 +17,11 @@ var colors = [
   'ccccff'
 ].map(function (colorInHex) {return '#' + colorInHex})
 
+$.fn.onAsObservable = function (events, selector) {
+  var subject = new Rx.Subject()
+  this.on(events, selector, function (e) { subject.onNext(e) })
+  return subject
+}
 var width = 768
 var height = 1024
 var penStyle = {strokeStyle: "rgba(100, 100, 200, 1.0)", lineWidth: 5, lineCap: "round"}
