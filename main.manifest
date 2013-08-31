@@ -1,11 +1,9 @@
 CACHE MANIFEST
-# v6
+# v8
 multi-draw.css
 index.html
-lib/jquery-1.7.1.min.js
-lib/rx.min-1.0.10621.js
-lib/rx.time.min-1.0.10621.js
-lib/rx.jquery.min.js
+lib/jquery-2.0.3.min.js
+lib/rx-2.1.12.min.js
 lib/shake.js
 multi-draw.js
 multi-draw-gallery.js
