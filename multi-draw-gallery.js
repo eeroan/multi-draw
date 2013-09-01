@@ -51,18 +51,18 @@ window.gallery = (function () {
     $.getJSON('uploadDir.php', function (data) {
       $('.server', $gallery).append(data.map(function(img) {return '<div class="image"><img src="' + img + '"/></div> '}).join(''))
     })
-    $('.close').on('click touchstart', function (e) {
+    $('.close').on(startEvents, function (e) {
       e.preventDefault()
       $gallery.slideUp()
     })
-    $('.image').on('click touchstart', function () { $(this).toggleClass('selected') })
-    $('#save').on('click touchstart', function (e) {
+    $('.image').on(startEvents, function () { $(this).toggleClass('selected') })
+    $('#save').on(startEvents, function (e) {
       e.preventDefault()
       var password = localStorage.getItem('img-pwd') || promptPwd()
       selectedIds().forEach(function(id) { post(id, password) })
     })
 
-    $('#remove').on('click touchstart', function (e) {
+    $('#remove').on(startEvents, function (e) {
       e.preventDefault()
       selectedIds().forEach(remove)
     })

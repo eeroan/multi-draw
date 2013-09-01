@@ -3,7 +3,7 @@ $.fn.onAsObservable = function (events, selector) {
   this.on(events, selector, function (e) { subject.onNext(e) })
   return subject
 }
-
+window.isTouch = (('ontouchstart' in window) || ('onmsgesturechange' in window) || (navigator.msMaxTouchPoints > 0))
 var colors = [
   'a52020',
   'ff00ff',
@@ -37,7 +37,7 @@ var index = 0
 var containsDrawing = false
 var clearButton = $('#clear')
 clearButton.onAsObservable('touchmove').subscribe(preventDefault)
-var startEvents = 'click touchstart mousedown'
+var startEvents = isTouch ? 'touchstart' : 'mousedown'
 var clearClick = clearButton.onAsObservable(startEvents).doAction(preventDefault)
 clearClick.subscribe(repaint)
 var shake = $window.onAsObservable('shake')
@@ -67,8 +67,8 @@ function setBrushSize(elem, size) {
     marginBottom: -radius / 2 + 10
   })
 }
-initBrowserVersion()
-initTouchVersion()
+if(isTouch) initTouchVersion()
+else initBrowserVersion()
 gallery.restoreThumbnails()
 $('#galleryLink').click(gallery.init)
 
