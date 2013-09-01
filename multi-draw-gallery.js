@@ -51,11 +51,11 @@ window.gallery = (function () {
     $.getJSON('uploadDir.php', function (data) {
       $('.server', $gallery).append(data.map(function(img) {return '<div class="image"><img src="' + img + '"/></div> '}).join(''))
     })
-    $('.close').click(function (e) {
+    $('.close').on('click touchstart', function (e) {
       e.preventDefault()
       $gallery.slideUp()
     })
-    $('.image').click(function () { $(this).toggleClass('selected') })
+    $('.image').on('click touchstart', function () { $(this).toggleClass('selected') })
     $('#save').on('click touchstart', function (e) {
       e.preventDefault()
       var password = localStorage.getItem('img-pwd') || promptPwd()
