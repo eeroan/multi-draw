@@ -19,7 +19,7 @@ body { position: relative; margin: 0; }
 #brush .brushSample.selected { background: #000; }
 #history { position: absolute; bottom: 5px; left: 320px; width: 440px; height: 100px; white-space: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; }
 #history img { height: 80px; margin: 0 5px; background: #fff; }
-#galleryLink { display: block; position: absolute; bottom: 4px; left: 700px; font-weight: bold; text-decoration: none; color: #666; }
+#galleryLink { display: block; position: absolute; bottom: 4px; left: 680px; font-weight: bold; text-decoration: none; color: #666; }
 
 #gallery { display: none; position: absolute; overflow-y: auto; -webkit-overflow-scrolling: touch; background: #666; width: 768px; height: 1024px; top: 0; left: 0; z-index: 1; }
 #gallery aside { margin-top: 30px;}

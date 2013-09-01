@@ -57,6 +57,17 @@ var defaultBrushSize = 10
 var currentBrushSize = defaultBrushSize
 generateBrushes()
 
+
+if(isTouch) initTouchVersion()
+else initBrowserVersion()
+gallery.restoreThumbnails()
+$('#galleryLink').click(gallery.init)
+
+$.get('main.manifest', function(data) {
+  var version = data.split('\n').filter(function(row) {return row.indexOf('#')==0})[0].substring(1).trim()
+  $('.version').html(version)
+})
+
 function updateCurrentBrushSize(size) { currentBrushSize = +size }
 
 function setBrushSize(elem, size) {
@@ -67,10 +78,6 @@ function setBrushSize(elem, size) {
     marginBottom: -radius / 2 + 10
   })
 }
-if(isTouch) initTouchVersion()
-else initBrowserVersion()
-gallery.restoreThumbnails()
-$('#galleryLink').click(gallery.init)
 
 function generateBrushes() {
   var $brush = $('#brush')
