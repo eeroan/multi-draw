@@ -1,3 +1,9 @@
+$.fn.onAsObservable = function (events, selector) {
+  var subject = new Rx.Subject()
+  this.on(events, selector, function (e) { subject.onNext(e) })
+  return subject
+}
+
 var colors = [
   'a52020',
   'ff00ff',
@@ -17,14 +23,9 @@ var colors = [
   'ccccff'
 ].map(function (colorInHex) {return '#' + colorInHex})
 
-$.fn.onAsObservable = function (events, selector) {
-  var subject = new Rx.Subject()
-  this.on(events, selector, function (e) { subject.onNext(e) })
-  return subject
-}
 var width = 768
 var height = 1024
-var penStyle = {strokeStyle: "rgba(100, 100, 200, 1.0)", lineWidth: 5, lineCap: "round"}
+var penStyle = { strokeStyle: "rgba(100, 100, 200, 1.0)", lineWidth: 5, lineCap: "round" }
 var $window = $(window)
 $window.bind('orientationchange', preventDefault)
 
@@ -37,31 +38,26 @@ var containsDrawing = false
 var clearButton = $('#clear')
 clearButton.onAsObservable('touchmove').subscribe(preventDefault)
 var startEvents = 'click touchstart mousedown'
-var clearClick = clearButton
-  .onAsObservable(startEvents)
-  .doAction(preventDefault)
-var shake = $window.onAsObservable('shake')
+var clearClick = clearButton.onAsObservable(startEvents).doAction(preventDefault)
 clearClick.subscribe(repaint)
+var shake = $window.onAsObservable('shake')
 shake.subscribe(repaint)
 $('body').append(palette(colors))
-var changeColor = $('#palette').onAsObservable(startEvents, '.color')
+var colorChange = $('#palette').onAsObservable(startEvents, '.color')
   .doAction(preventDefault)
   .select(function (e) {return $(e.currentTarget)})
 var selectedColor = null
-changeColor.subscribe(function (obj) {
+colorChange.subscribe(function (obj) {
   obj.siblings().removeClass('selected')
   obj.addClass('selected')
   var color = obj.data('color')
   selectedColor = color == '#ffffff' ? null : color
 })
-var defaultSize = 10
+var defaultBrushSize = 10
+var currentBrushSize = defaultBrushSize
 generateBrushes()
-var currentBrushSize
-updateCurrentBrushSize(defaultSize)
 
-function updateCurrentBrushSize(size) {
-  currentBrushSize = +size
-}
+function updateCurrentBrushSize(size) { currentBrushSize = +size }
 
 function setBrushSize(elem, size) {
   var radius = +size + 10
@@ -84,7 +80,7 @@ function generateBrushes() {
     var $div = $('<div>')
     setBrushSize($div, value)
 
-    return $div.addClass('brushSample').toggleClass('selected', value === defaultSize).data('value', value)
+    return $div.addClass('brushSample').toggleClass('selected', value === defaultBrushSize).data('value', value)
   }
 
   $.fn.append.apply($brush, map)
