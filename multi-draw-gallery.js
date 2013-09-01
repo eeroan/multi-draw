@@ -43,7 +43,7 @@ window.gallery = (function () {
     e.preventDefault()
     var key = 'savedMultiDrawImages'
     var savedMultiDrawImages = JSON.parse(localStorage.getItem(key)) || []
-    $gallery.show().html('<aside><a href="#" class="close">Close</a><button id="save">Save selected</button><button id="remove">Remove selected</button></aside>' +
+    $gallery.show().html('<aside><button class="close">Close</button> <button id="save">Save selected</button> <button id="remove">Remove selected</button></aside>' +
       '<div class="local">' + savedMultiDrawImages.map(function (id) {
       var dataURL = localStorage.getItem(id)
       return '<div class="image" id="' + id + '"><img src="' + dataURL + '"/>' + '</div>'
