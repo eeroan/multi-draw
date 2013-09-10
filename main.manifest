@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# v12
+# v13
 multi-draw.css
 index.html
 lib/jquery-2.0.3.min.js
@@ -7,3 +7,7 @@ lib/rx-2.1.12.min.js
 lib/shake.js
 multi-draw.js
 multi-draw-gallery.js
+
+NETWORK:
+*
+http://*
