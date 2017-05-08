@@ -12,7 +12,7 @@ window.gallery = (function () {
     //.on('click', 'a', function() {document.location = $(this).attr('href')})
   }
 
-  function thumb(dataURL) { return '<a href="' + dataURL + '" ><img src="' + dataURL + '"/></a>'}
+  function thumb(dataURL) { return `<a href="javascript:window.open('${dataURL}')" ><img src="${dataURL}"/></a>`}
 
   function uniqueId() { return 'img-' + String(parseInt((new Date).getTime() / 1000, 10) - 1370980000) }
 
