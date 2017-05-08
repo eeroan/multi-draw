@@ -5,16 +5,16 @@
     -ms-user-select: none;
     user-select: none;
 }
-body { position: relative; margin: 0; font-family: "Helvetica Neue", serif; }
-#canvas { border: 1px solid #000; position: relative; margin: 0; background: -webkit-radial-gradient(center, circle cover, white 0%, white 70%, #efefef 90%, #ccc 100%); }
+body { position: absolute; height: 100%; width:100%;margin: 0; font-family: "Helvetica Neue", serif; }
+#canvas { border: 1px solid #000; position: absolute; height: 100%; width:100%; margin: 0; background: -webkit-radial-gradient(center, circle cover, white 0%, white 70%, #efefef 90%, #ccc 100%); }
 .player { position: absolute; top: 0; left: 0; z-index: 99; width: 25px; height: 25px; background: red; border-radius: 15px; -moz-border-radius: 15px; border: 1px solid #F88; }
-#clear { display: block; position: absolute; bottom: 4px; left: 0; width: 60px; height: 60px; boder: 1px solid #999; background: -webkit-linear-gradient(#fff, #ccc); line-height: 0; font-weight: bold; }
+#clear { display: block; position: absolute; bottom: 4px; left: 10px; width: 5vh; height: 5vh; boder: 1px solid #999; background: -webkit-linear-gradient(#fff, #ccc); line-height: 0; font-weight: bold; }
 #clear:active { background: -webkit-linear-gradient(#ccc, #fff) }
-#clear span { font: 60px arial, serif; color: #000; position: relative; top: -8px; }
-#palette { position: absolute; left: 0; top: 100px; }
-#palette .color { display: block; margin: 10px; width: 40px; height: 40px; border: 1px solid #000; font-size: 30px; }
+#clear span { font: 5vh/.9 arial, serif; color: #000; position: relative; }
+#palette { position: absolute; left: 0; bottom: 5vh; }
+#palette .color { display: block; margin: 10px; width: 40px; height: 3.5vh; border: 1px solid #000; font-size: 30px; }
 #palette .color.selected { border: 1px solid #fff; box-shadow: 0 0 0 8px #000; }
-#brush { position: absolute; bottom: 25px; left: 100px; }
+#brush { position: absolute; bottom: 2vh; left: 10vh; }
 #brush .brushSample { background: #fff; border: 1px solid #000; border-radius: 1000px; display: inline-block; margin-left: 10px; }
 #brush .brushSample.selected { background: #000; }
 #history { position: absolute; bottom: 5px; left: 320px; width: 440px; height: 100px; white-space: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; }

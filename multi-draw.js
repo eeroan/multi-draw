@@ -71,11 +71,11 @@ $.get('main.manifest', function(data) {
 function updateCurrentBrushSize(size) { currentBrushSize = +size }
 
 function setBrushSize(elem, size) {
-  var radius = +size + 10
+  var radius = +size/15+1
   elem.css({
-    width: radius,
-    height: radius,
-    marginBottom: -radius / 2 + 10
+    width: radius+'vh',
+    height: radius+'vh',
+    marginBottom: (-radius / 2 + 1)+'vh'
   })
 }
 
