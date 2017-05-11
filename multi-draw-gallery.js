@@ -5,7 +5,11 @@ window.gallery = (function () {
     saveImage: saveImage
   }
 
-  function restoreThumbnails() {
+    function handleError(error) {
+        alert(error)
+    }
+
+    function restoreThumbnails() {
     var key = 'savedMultiDrawImages'
     var savedMultiDrawImages = JSON.parse(localStorage.getItem(key)) || []
     $('#history').html(savedMultiDrawImages.map(function (id) { return thumb(localStorage.getItem(id)) }).reverse().join(''))
@@ -58,8 +62,8 @@ window.gallery = (function () {
     $('.image').on(startEvents, function () { $(this).toggleClass('selected') })
     $('#save').on(startEvents, function (e) {
       e.preventDefault()
-      var password = localStorage.getItem('img-pwd') || promptPwd()
-      selectedIds().forEach(function(id) { post(id, password) })
+      //var password = localStorage.getItem('img-pwd') || promptPwd()
+      selectedIds().forEach(function(id) { post(id) })
     })
 
     $('#remove').on(startEvents, function (e) {
@@ -69,18 +73,26 @@ window.gallery = (function () {
 
     return false
 
-    function post(id, password) {
+    function post(id) {
       var dataUrl = localStorage.getItem(id)
-      dataUrl = dataUrl.substring(dataUrl.indexOf(',') + 1)
-      return $.post("http://eea.kapsi.fi/draw/dataUrl.php", {
-        img: dataUrl,
-        password: password,
-        id: id
-      })
-        .done(function () {
-          remove(id)
+        console.log('saving', dataUrl)
+        var client = new Dropbox.Client({ key: "no52ogxc7kgv3jw" });
+
+        client.authenticate({interactive: false}, function(error, client) {
+            if (error) return handleError(error);
+            if (client.isAuthenticated()) saveToDropbox(client, dataUrl, id);
+            else {
+                var button = document.querySelector("#signin-button");
+                button.setAttribute("class", "visible");
+                button.addEventListener("click", function() {
+                    // The user will have to click an 'Authorize' button.
+                    client.authenticate(function(error, client) {
+                        if (error) return handleError(error);
+                        saveToDropbox(client, dataUrl, id);
+                    });
+                });
+            }
         })
-        .fail(function (data, textStatus, jqXHR) {alert('Failure when saving: ' + jqXHR)})
     }
 
     function selectedIds() { return $('.image.selected', $gallery).map(function () {return this.id}).toArray()}
@@ -92,10 +104,22 @@ window.gallery = (function () {
       $('#' + id).remove()
     }
 
-    function promptPwd() {
-      var password = prompt('Enter the password for image server')
-      localStorage.setItem('img-pwd', password)
-      return password
-    }
+      function saveToDropbox(client, dataUrl, id) {
+          console.log('now saving')
+          fetch(dataUrl)
+              .then(res => res.blob())
+              .then(blob => {
+                  console.log('blob',blob)
+                  var reader = new FileReader();
+                  reader.addEventListener("loadend", function () {
+                      console.log('file', reader.result)
+                      client.writeFile(id+".png", reader.result, function (error, stat) {
+                          if (error) return handleError(error);
+                          remove(id)
+                      });
+                  });
+                  reader.readAsArrayBuffer(blob);
+              })
+      }
   }
 })()
