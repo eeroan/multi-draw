@@ -75,24 +75,22 @@ window.gallery = (function () {
 
     function post(id) {
       var dataUrl = localStorage.getItem(id)
-        console.log('saving', dataUrl)
-        var client = new Dropbox.Client({ key: "no52ogxc7kgv3jw" });
-
-        client.authenticate({interactive: false}, function(error, client) {
-            if (error) return handleError(error);
-            if (client.isAuthenticated()) saveToDropbox(client, dataUrl, id);
-            else {
-                var button = document.querySelector("#signin-button");
-                button.setAttribute("class", "visible");
-                button.addEventListener("click", function() {
-                    // The user will have to click an 'Authorize' button.
-                    client.authenticate(function(error, client) {
-                        if (error) return handleError(error);
-                        saveToDropbox(client, dataUrl, id);
-                    });
-                });
-            }
-        })
+      var client = new Dropbox.Client({key: "no52ogxc7kgv3jw"})
+      client.authenticate({interactive: false}, function (error, client) {
+        if (error) return handleError(error)
+        if (client.isAuthenticated()) saveToDropbox(client, dataUrl, id)
+        else {
+          var button = document.querySelector("#signin-button")
+          button.setAttribute("class", "visible")
+          button.addEventListener("click", function () {
+            // The user will have to click an 'Authorize' button.
+            client.authenticate(function (error, client) {
+              if (error) return handleError(error)
+              saveToDropbox(client, dataUrl, id)
+            })
+          })
+        }
+      })
     }
 
     function selectedIds() { return $('.image.selected', $gallery).map(function () {return this.id}).toArray()}
@@ -104,22 +102,15 @@ window.gallery = (function () {
       $('#' + id).remove()
     }
 
-      function saveToDropbox(client, dataUrl, id) {
-          console.log('now saving')
-          fetch(dataUrl)
-              .then(res => res.blob())
-              .then(blob => {
-                  console.log('blob',blob)
-                  var reader = new FileReader();
-                  reader.addEventListener("loadend", function () {
-                      console.log('file', reader.result)
-                      client.writeFile(id+".png", reader.result, function (error, stat) {
-                          if (error) return handleError(error);
-                          remove(id)
-                      });
-                  });
-                  reader.readAsArrayBuffer(blob);
-              })
-      }
+    function saveToDropbox(client, dataUrl, id) {
+      fetch(dataUrl)
+        .then(res => res.blob())
+        .then(blob => {
+          client.writeFile(id + ".png", blob, function (error, stat) {
+            if (error) return handleError(error)
+            remove(id)
+          })
+        })
+    }
   }
 })()
