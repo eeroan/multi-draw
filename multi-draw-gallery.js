@@ -103,14 +103,16 @@ window.gallery = (function () {
     }
 
     function saveToDropbox(client, dataUrl, id) {
-      fetch(dataUrl)
-        .then(res => res.blob())
-        .then(blob => {
-          client.writeFile(id + ".png", blob, function (error, stat) {
-            if (error) return handleError(error)
-            remove(id)
-          })
-        })
+      client.writeFile(id + ".png", dataURItoBlob(dataUrl, 'image/png'), function (error, stat) {
+        if (error) return handleError(error)
+        remove(id)
+      })
+    }
+
+    function dataURItoBlob(dataURI, dataTYPE) {
+      var binary = atob(dataURI.split(',')[1]), array = []
+      for (var i = 0; i < binary.length; i++) array.push(binary.charCodeAt(i))
+      return new Blob([new Uint8Array(array)], {type: dataTYPE})
     }
   }
 })()
