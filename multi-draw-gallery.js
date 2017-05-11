@@ -80,15 +80,15 @@ window.gallery = (function () {
         if (error) return handleError(error)
         if (client.isAuthenticated()) saveToDropbox(client, dataUrl, id)
         else {
-          var button = document.querySelector("#signin-button")
-          button.setAttribute("class", "visible")
-          button.addEventListener("click", function () {
+          //var button = document.querySelector("#signin-button")
+          //button.setAttribute("class", "visible")
+          //button.addEventListener("click", function () {
             // The user will have to click an 'Authorize' button.
             client.authenticate(function (error, client) {
               if (error) return handleError(error)
               saveToDropbox(client, dataUrl, id)
             })
-          })
+          //})
         }
       })
     }
