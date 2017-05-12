@@ -21,7 +21,7 @@ body { position: absolute; height: 100%; width:100%;margin: 0; font-family: "Hel
 #history img { height: 80px; margin: 0 5px; background: #fff; }
 #galleryLink { display: block; position: absolute; bottom: 4px; left: 680px; font-weight: bold; text-decoration: none; color: #666; }
 
-#gallery { display: none; position: absolute; overflow-y: auto; -webkit-overflow-scrolling: touch; color: #eee; background: #666; width: 768px; height: 1024px; top: 0; left: 0; z-index: 1; }
+#gallery { display: none; position: absolute; overflow-y: auto; -webkit-overflow-scrolling: touch; color: #eee; background: #666; width: 100%; height: 100%; top: 0; left: 0; z-index: 1; }
 #gallery aside { margin-top: 30px; }
 #gallery .image { display: inline-block; }
 #gallery .image.selected { background: #000; }

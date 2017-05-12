@@ -23,14 +23,14 @@ var colors = [
   'ccccff'
 ].map(function (colorInHex) {return '#' + colorInHex})
 
-var width = 768
-var height = 1024
 var penStyle = { strokeStyle: "rgba(100, 100, 200, 1.0)", lineWidth: 5, lineCap: "round" }
 var $window = $(window)
 $window.bind('orientationchange', preventDefault)
 
 var $canvas = $('#canvas')
 var canvasNode = $canvas.get(0)
+canvasNode.width = window.innerWidth
+canvasNode.height = window.innerHeight
 var drawingContext = $.extend(canvasNode.getContext("2d"), penStyle)
 
 var index = 0
