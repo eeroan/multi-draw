@@ -75,7 +75,7 @@ window.gallery = (function () {
 
     function post(id) {
       var dataUrl = localStorage.getItem(id)
-      var client = new Dropbox.Client({key: "no52ogxc7kgv3jw"})
+      var client = new Dropbox({clientId: "no52ogxc7kgv3jw"})
       client.authenticate({interactive: false}, function (error, client) {
         if (error) return handleError(error)
         if (client.isAuthenticated()) saveToDropbox(client, dataUrl, id)
