@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/eeroan/multi-draw/issues"
   },
-  "homepage": "https://github.com/eeroan/multi-draw#readme"
+  "homepage": "https://github.com/eeroan/multi-draw#readme",
+  "dependencies": {
+    "dropbox": "^2.5.12"
+  }
 }
