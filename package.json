@@ -1,0 +1,19 @@
+{
+  "name": "multi-draw",
+  "version": "1.0.0",
+  "description": "Live demo at http://eea.kapsi.fi/draw",
+  "main": "multi-draw.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eeroan/multi-draw.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/eeroan/multi-draw/issues"
+  },
+  "homepage": "https://github.com/eeroan/multi-draw#readme"
+}
