@@ -5,7 +5,7 @@ index.html
 lib/jquery-2.0.3.min.js
 lib/rx-2.1.12.min.js
 lib/shake.js
-lib/dropbox.min.js
+lib/Dropbox-sdk.min.js
 multi-draw.js
 multi-draw-gallery.js
 
