@@ -73,24 +73,26 @@ window.gallery = (function () {
 
     return false
 
+    function getToken() {
+      return document.location.hash.replace(/^#/,'')
+        .split('&')
+        .map(x=>x.split('='))
+        .find(x=>x[0]=='access_token')[1]
+    }
+
+    function hasToken() {
+      return document.location.hash.indexOf('access_token') !== -1
+    }
+
     function post(id) {
-      var dataUrl = localStorage.getItem(id)
-      var client = new Dropbox({clientId: "no52ogxc7kgv3jw"})
-      client.authenticate({interactive: false}, function (error, client) {
-        if (error) return handleError(error)
-        if (client.isAuthenticated()) saveToDropbox(client, dataUrl, id)
-        else {
-          //var button = document.querySelector("#signin-button")
-          //button.setAttribute("class", "visible")
-          //button.addEventListener("click", function () {
-            // The user will have to click an 'Authorize' button.
-            client.authenticate(function (error, client) {
-              if (error) return handleError(error)
-              saveToDropbox(client, dataUrl, id)
-            })
-          //})
-        }
-      })
+      if (hasToken()) {
+        const client = new Dropbox({accessToken: getToken()})
+        const dataUrl = localStorage.getItem(id)
+        saveToDropbox(client, dataUrl, id)
+      } else {
+        const client = new Dropbox({clientId: "no52ogxc7kgv3jw"})
+        document.location.assign(client.getAuthenticationUrl(document.location.href))
+      }
     }
 
     function selectedIds() { return $('.image.selected', $gallery).map(function () {return this.id}).toArray()}
@@ -103,10 +105,14 @@ window.gallery = (function () {
     }
 
     function saveToDropbox(client, dataUrl, id) {
-      client.writeFile(id + ".png", dataURItoBlob(dataUrl, 'image/png'), function (error, stat) {
-        if (error) return handleError(error)
-        remove(id)
+      client.filesUpload({
+        path: '/'+ id + ".png",
+        contents: dataURItoBlob(dataUrl, 'image/png')
       })
+        .then(function () {remove(id)})
+        .catch(function (err) {
+          console.log(err)
+        })
     }
 
     function dataURItoBlob(dataURI, dataTYPE) {
