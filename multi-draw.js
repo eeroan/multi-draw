@@ -1,3 +1,8 @@
+$.fn.onAsObservableNew = function (eventName, extraOptions) {
+  var subject = new Rx.Subject()
+  this.get(0).addEventListener(eventName, function(e) {console.log('next');subject.onNext(e)}, extraOptions)
+  return subject
+}
 $.fn.onAsObservable = function (events, selector) {
   var subject = new Rx.Subject()
   this.on(events, selector, function (e) { subject.onNext(e) })
@@ -37,13 +42,13 @@ var index = 0
 var containsDrawing = false
 var clearButton = $('#clear')
 clearButton.onAsObservable('touchmove').subscribe(preventDefault)
-var startEvents = isTouch ? 'touchstart' : 'mousedown'
-var clearClick = clearButton.onAsObservable(startEvents).doAction(preventDefault)
+var startEvent = isTouch ? 'touchstart' : 'mousedown'
+var clearClick = clearButton.onAsObservable(startEvent).doAction(preventDefault)
 clearClick.subscribe(repaint)
 var shake = $window.onAsObservable('shake')
 shake.subscribe(repaint)
 $('body').append(palette(colors))
-var colorChange = $('#palette').onAsObservable(startEvents, '.color')
+var colorChange = $('#palette').onAsObservable(startEvent, '.color')
   .doAction(preventDefault)
   .select(function (e) {return $(e.currentTarget)})
 var selectedColor = null
@@ -91,7 +96,7 @@ function generateBrushes() {
   }
 
   $.fn.append.apply($brush, map)
-  var brushSizeChangeElem = $brush.onAsObservable(startEvents, '.brushSample')
+  var brushSizeChangeElem = $brush.onAsObservable(startEvent, '.brushSample')
     .doAction(preventDefault)
     .select(function (e) {return $(e.currentTarget)})
   brushSizeChangeElem.subscribe(function (elem) {
@@ -103,7 +108,7 @@ function generateBrushes() {
 
 function initTouchVersion() {
   var touchStart = $canvas.onAsObservable('touchstart')
-  var touchMove = $(document).onAsObservable('touchmove')
+  var touchMove = $(document).onAsObservableNew('touchmove',{ passive: false })
   var touchEnd = $(document).onAsObservable('touchend')
   var path = touchStart
     .select(movedTouches)
@@ -115,7 +120,7 @@ function initTouchVersion() {
       drawPath([currentPos, {pageX: currentPos.pageX + 1, pageY: currentPos.pageY + 1}, colorModulo(colorIndex)])
       return touchMove
         .doAction(preventDefault)
-        .select(function (e) {return e.originalEvent.touches})
+        .select(function (e) {return e.originalEvent ? e.originalEvent.touches: e.touches})
         .select(function (touches) { return  findByIdentifier(touches, true)[0] || null })
         .where(function (touch) { return touch !== null })
         .takeUntil(touchEnd.select(movedTouches).where(function (touches) { return findByIdentifier(touches).length > 0 }))
@@ -160,7 +165,7 @@ function hasChanged(line) {return line[0].pageX != line[1].pageX || line[0].page
 
 function coordinates(e) { return {pageX: e.pageX, pageY: e.pageY, timeStamp: new Date().getTime() } }
 
-function movedTouches(e) {return e.originalEvent.changedTouches}
+function movedTouches(e) {return e.originalEvent ? e.originalEvent.changedTouches : e.changedTouches}
 
 function preventDefault(e) { e.preventDefault() }
 

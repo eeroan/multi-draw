@@ -55,18 +55,18 @@ window.gallery = (function () {
     $.getJSON('uploadDir.php', function (data) {
       $('.server', $gallery).append(data.map(function(img) {return '<div class="image"><img src="' + img + '"/></div> '}).join(''))
     })
-    $('.close').on(startEvents, function (e) {
+    $('.close').on(startEvent, function (e) {
       e.preventDefault()
       $gallery.slideUp()
     })
-    $('.image').on(startEvents, function () { $(this).toggleClass('selected') })
-    $('#save').on(startEvents, function (e) {
+    $('.image').on(startEvent, function () { $(this).toggleClass('selected') })
+    $('#save').on(startEvent, function (e) {
       e.preventDefault()
       //var password = localStorage.getItem('img-pwd') || promptPwd()
       selectedIds().forEach(function(id) { post(id) })
     })
 
-    $('#remove').on(startEvents, function (e) {
+    $('#remove').on(startEvent, function (e) {
       e.preventDefault()
       selectedIds().forEach(remove)
     })
